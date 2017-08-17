@@ -41,16 +41,10 @@ enum class ArgumentType { R = 1, A, C };
 
 enum class Type { BYTE = 1, WORD = 2, DWORD = 4, QWORD = 8 };
 
-const QHash<QString, Type> type =
+const QHash<QString, Type> HType =
 {
 	{ "byte", Type::BYTE }, { "word", Type::WORD },
 	{ "dword", Type::DWORD }, { "qword", Type::QWORD }
-};
-
-const QHash<QString, Type> InstrType =
-{
-	{ "b", Type::BYTE }, { "w", Type::WORD },
-	{ "d", Type::DWORD }, { "q", Type::QWORD }
 };
 
 enum class Instruction
@@ -218,6 +212,7 @@ enum class Instruction
 
 struct Pair
 {
+	Pair() {}
 	Pair(Instruction i, int32 a, Type t) :
 		instr_code(i), argument_count(a), argument_type(t) {}
 
