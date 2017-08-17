@@ -32,24 +32,5 @@ int main(int argc, char *argv[])
 
 	Lexer lex(input);
 
-	QVector<CodeToken> o = lex.codeOut();
-
-	QVector<DataToken> k = lex.dataOut();
-	for (auto aa : k)
-	{
-		qDebug() << aa.name << " line data" << aa.line;
-	}
-
-	for (auto a : o)
-	{
-		qDebug() << a.name << " line code" << a.line;
-		for (auto i : a.arg_vlaue)
-		{
-			qDebug() << i;
-		}
-	}
-
-
-	exit(1);
 	return aaa.exec();
 }
