@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication aaa(argc, argv);
 
-	QString FILENAME = "test.asm";
-	QFile fin(FILENAME);
+	const QString filename = "test.asm";
+	QFile fin(filename);
 	QFileInfo f_info(fin);
 
 	if (f_info.completeSuffix() != "asm")
@@ -29,25 +29,35 @@ int main(int argc, char *argv[])
 	}
 
 	QTextStream input(&fin);
-
-	Lexer lex(input);
-
-	QVector<CodeToken> o = lex.codeOut();
-
-	QVector<DataToken> k = lex.dataOut();
-	for (auto aa : k)
+	try
 	{
-		qDebug() << aa.name << " line data" << aa.line;
-	}
+		CLexer lexer;
 
-	for (auto a : o)
-	{
-		qDebug() << a.name << " line code" << a.line;
-		for (auto i : a.arg_vlaue)
+		lexer.work(input);
+
+		QVector<SCodeToken> o = lexer.getCode();
+
+		QVector<SDataToken> k = lexer.getData();
+		for (const auto aa : k)
 		{
-			qDebug() << i;
+			qDebug() << aa.identifierName << " line data" << aa.line;
+		}
+
+		for (auto a : o)
+		{
+			qDebug() << a.instructionName << " line code" << a.line;
+			qDebug() << a.opcode.instr;
+			for (const auto i : a.argValue)
+			{
+				qDebug() << i;
+			}
 		}
 	}
+	catch (CError& e)
+	{
+		qDebug() << e.what();
+	}
+
 
 
 	exit(1);

@@ -1,49 +1,57 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include <QTextStream>
-#include <QVector>
-#include <qdebug.h>
+#include <QVarLengthArray>
+#include <QVariant>
+#include <QDebug>
+#include <QDataStream>
 #include "instructions.h"
-#include <qfile.h>
 
-struct DataToken
+struct SDataToken
 {
-	DataToken() {}
-	DataToken(Type t, uint32 l) : size(t), line(l) {}
-	Type size;
-	QString name;
+	SDataToken()
+	{
+	}
+	SDataToken(EType t, uint32 l)
+		: type(t), line(l)
+	{
+	}
+
+	EType type;
+	QString identifierName;
 	QVariant value;
 
 	uint32 line;
 };
 
-struct CodeToken
+struct SCodeToken
 {
-	CodeToken() {}
-	CodeToken(const QString& n, const Type& t, uint32 l) : name(n), size(t), line(l) {}
-	Type size;
-	QString name;
+	SCodeToken()
+	{
+	}
+	SCodeToken(const QString& n, uint32 l)
+		:instructionName(n), line(l)
+	{
+	}
 
-	QVector<ArgumentType> arg_type;
-	QVector<QString> arg_vlaue;
-	//ArgumentType arg1_type;
-	//ArgumentType arg2_type;
-	//ArgumentType arg3_type;
+	QString instructionName;
 
-	//QVariant arg1_value;
-	//QVariant arg2_value;
-	//QVariant arg3_value;
+	QVarLengthArray<uint32, 3> argValue;
 
+	UOpcode opcode;
 	uint32 line;
 };
 
-class Lexer
+class CLexer
 {
 public:
-	explicit Lexer(QTextStream & in);
-	QVector<DataToken> dataOut() const;
-	QVector<CodeToken> codeOut() const;
+	explicit CLexer()
+	{
+	}
+	void work(QTextStream& in);
+	QVector<SDataToken> getData() const;
+	QVector<SCodeToken> getCode() const;
+
 private:
 	bool isDigit(const QString &);
 	bool isRegister(const QString &);
@@ -55,13 +63,19 @@ private:
 	bool isDelimiter(QChar ch);
 	void checkType(const QString& type_string);
 
-	uint32 line_ = 1;
-	int32 argCount_;
-	QVector<DataToken> data_tokens_;
-	QVector<CodeToken> code_tokens_;
-	QSet<QString> data_;
+	uint32 getRegNumber(const QString & argument);
 
-	enum class State { init, code_command, code_argument, data_type, data_identifier, data_value, comment };
+	uint32 m_line = 1;
+	int32 m_argCount = 0;
+	QVector<SDataToken> m_dataTokens;
+	QVector<SCodeToken> m_codeTokens;
+	QSet<QString> m_data;
+
+	enum class EState
+	{
+		Init, CodeCommand, CodeArgument, DataType, DataIdentifier,
+		DataValue, Comment, Space, Attribute, Comma
+	};
 };
 
 #endif // !LEXER_H
