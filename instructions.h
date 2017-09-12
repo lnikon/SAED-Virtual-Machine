@@ -12,18 +12,28 @@ using uint32 = unsigned int;
 using int64 = long long;
 using uint64 = unsigned long long;
 
-class CError
+class CError : public std::exception
 {
 public:
-	explicit CError(QString e) : m_error(e)
+	CError() : m_line(0)
 	{
 	}
-	QString what() const 
+
+	explicit CError(QString token) : m_error(token), m_line(0)
 	{
-		return m_error;
+	}
+
+	explicit CError(QString token, uint32 l) : m_error(token), m_line(l)
+	{
+	}
+
+	virtual QString ShowError() const
+	{
+		return m_error + QString::number(m_line);
 	}
 private:
 	QString m_error;
+	uint32 m_line;
 };
 
 union UOpcode
@@ -51,7 +61,7 @@ union UOpcode
 	};
 };
 
-enum class EArgumentType { Register = 1, AddresRegister, Constant };
+enum class EArgumentType { Register = 1, Data, Constant };
 
 enum class EType { Byte, Word, Dword, Qword };
 //enum class EType { Byte = 1, Word = 2, Dword = 4, Qword = 8 };
@@ -64,6 +74,7 @@ const QHash<QString, EType> HType =
 
 enum class EInstruction
 {
+	Invalid,
 	Nop = 1,
 	Break,
 	Int,
@@ -240,6 +251,7 @@ struct SInstructionParameters
 
 const QHash<QString, SInstructionParameters> inst =
 {
+	//{ "invalid", SInstructionParameters(EInstruction::Invalid, 0, EType::Dword) },
 	{ "nop", SInstructionParameters(EInstruction::Nop, 0, EType::Dword) },
 	{ "break", SInstructionParameters(EInstruction::Break, 1, EType::Dword) },
 	{ "int", SInstructionParameters(EInstruction::Int, 1, EType::Dword) },

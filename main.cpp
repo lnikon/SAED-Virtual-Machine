@@ -38,14 +38,15 @@ int main(int argc, char *argv[])
 		QVector<SCodeToken> o = lexer.getCode();
 
 		QVector<SDataToken> k = lexer.getData();
+		lexer.p();
 		for (const auto aa : k)
 		{
-			qDebug() << aa.identifierName << " line data" << aa.line;
+			qDebug() << aa.identifierName << " line data " << aa.line << " with offset " << aa.value << " type " << static_cast<uint32>(aa.type);
 		}
 
 		for (auto a : o)
 		{
-			qDebug() << a.instructionName << " line code" << a.line;
+			qDebug() << " line code" << a.line;
 			qDebug() << a.opcode.instr;
 			for (const auto i : a.argValue)
 			{
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
 	}
 	catch (CError& e)
 	{
-		qDebug() << e.what();
+		qDebug() << e.ShowError();
 	}
 
 

@@ -4,6 +4,7 @@ void CLexer::work(QTextStream & in)
 {
 	EState state = EState::Init;
 	EState n_state = EState::Init;
+	EState p_state = EState::Init;
 	QString buffer;
 	m_line = 1;
 	while (!in.atEnd())
@@ -33,6 +34,9 @@ void CLexer::work(QTextStream & in)
 			{
 				continue;
 			}
+
+			p_state = state;
+
 			switch (state)
 			{
 			case EState::Init:
@@ -62,7 +66,7 @@ void CLexer::work(QTextStream & in)
 				break;
 			case EState::DataType:
 				checkType(buffer);
-				//state = EState::Space;
+				p_state = state;
 				state = EState::DataIdentifier;
 				break;
 			case EState::DataIdentifier:
@@ -71,7 +75,7 @@ void CLexer::work(QTextStream & in)
 				break;
 			case EState::DataValue:
 				checkValue(buffer);
-				state = EState::Init;
+				state = EState::DataType;
 				break;
 			case EState::Comment:
 				if (ch == '\n')
@@ -79,11 +83,6 @@ void CLexer::work(QTextStream & in)
 					state = n_state;
 				}
 				break;
-			case EState::Space:
-
-				break;
-			case EState::Attribute: break;
-			case EState::Comma: break;
 			}
 			buffer.clear();
 		}
@@ -120,14 +119,16 @@ void CLexer::checkCommand(const QString & command)
 {
 	if (inst.contains(command))
 	{
-		m_codeTokens.push_back(SCodeToken(command, m_line));
+		m_codeTokens.push_back(SCodeToken(m_line));
 		m_argCount = inst[command].argument_count;
 		m_codeTokens.last().opcode.instr = static_cast<uint16>(inst[command].instr_code);
 		m_codeTokens.last().opcode.argSize = static_cast<uint16>(inst[command].argument_type);
 	}
 	else
 	{
-		throw CError(command + " command on line " + QString::number(m_line) + " not found" );
+		//throw CommandError(command,m_line);
+		throw CError(command + " on line " + QString::number(m_line) + " can't be used as command");
+
 	}
 }
 
@@ -136,19 +137,18 @@ void CLexer::checkArgument(const QString & argument)
 	m_argCount--;
 	if (isRegister(argument))
 	{
-		m_codeTokens.last().opcode.arg1Type = static_cast<uint16>(EArgumentType::Register);
 		m_codeTokens.last().argValue.push_back(getRegNumber(argument));
-
+		setArgType(EArgumentType::Register);
 	}
 	else if (m_data.contains(argument))
 	{
-		m_codeTokens.last().opcode.arg2Type = static_cast<uint16>(EArgumentType::Constant);
-		m_codeTokens.last().argValue.push_back(argument.toInt());
+		m_codeTokens.last().argValue.push_back(m_data[argument]);
+		setArgType(EArgumentType::Data);
 	}
 	else if (isDigit(argument))
 	{
-		m_codeTokens.last().opcode.arg3Type = static_cast<uint16>(EArgumentType::Constant);
 		m_codeTokens.last().argValue.push_back(argument.toInt());
+		setArgType(EArgumentType::Constant);
 	}
 	else
 	{
@@ -162,38 +162,74 @@ void CLexer::checkIdentifier(const QString & identifier)
 	{
 		throw CError(identifier + " on line " + QString::number(m_line) + " can't be used as identifier");
 	}
-	
-	m_dataTokens.last().identifierName = identifier;
-}
 
- // isn't ready
-void CLexer::checkValue(const QString & value)
-{
-	if (isDigit(value))
+	if (identifier.contains('[') && identifier.contains(']'))
 	{
-		switch (m_dataTokens.last().type)
+		QString tmp = identifier.split('[')[1].split(']')[0];
+		if (!tmp.isEmpty())
 		{
-		case EType::Byte:
+			m_dataTokens.last().count = tmp.toInt();
+		}
+		else
 		{
-			uint8 val = value.toInt();
-			m_dataTokens.last().value = val;
-			break;
+			m_dataTokens.last().count = -2;
 		}
-		case EType::Word:
-			m_dataTokens.last().value = value.toShort();
-			break;
-		case EType::Dword:
-			m_dataTokens.last().value = value.toInt();
-			break;
-		case EType::Qword:
-			m_dataTokens.last().value = value.toLongLong();
-			break;
-		default:;
-		}
+	}
+	else if (IsAlNum(identifier))
+	{
+		m_dataTokens.last().count = -1;
 	}
 	else
 	{
-		throw CError("not a number");
+
+	}
+	m_dataTokens.last().identifierName = identifier;
+	m_data.insert(identifier, m_dataOffset++);
+}
+
+// isn't ready
+void CLexer::checkValue(const QString & value)
+{
+	const int32 count = m_dataTokens.last().count;
+	if (count == -1)
+	{
+		if (isDigit(value))
+		{
+			switch (m_dataTokens.last().type)
+			{
+			case EType::Byte:
+			{
+				uint8 val = value.toInt();
+				m_dataTokens.last().value = val;
+				break;
+			}
+			case EType::Word:
+				m_dataTokens.last().value = value.toShort();
+				break;
+			case EType::Dword:
+				m_dataTokens.last().value = value.toInt();
+				break;
+			case EType::Qword:
+				m_dataTokens.last().value = value.toLongLong();
+				break;
+			default:;
+			}
+		}
+		else
+		{
+			throw CError("not a number");
+		}
+	}
+	else if (count == -2)
+	{
+		/*QStringList arrElements = value.split(',');
+		QVarLengthArray<uint32> arr;
+		for (const QString& a : arrElements)
+		{
+			arr.push_back(a.toInt());
+		}
+		m_dataTokens.last().count = arr.size();
+		m_dataTokens.last().value = arr;*/
 	}
 }
 
@@ -227,6 +263,21 @@ void CLexer::checkType(const QString& type_string)
 {
 	if (HType.contains(type_string))
 	{
+		/*switch (HType[type_string])
+		{
+		case EType::Byte:
+			m_dataOffset += 1;
+			break;
+		case EType::Word:
+			m_dataOffset += 2;
+			break;
+		case EType::Dword: 
+			m_dataOffset += 4;
+			break;
+		case EType::Qword:
+			m_dataOffset += 8;
+			break;
+		}*/
 		m_dataTokens.push_back(SDataToken(HType[type_string], m_line));
 	}
 	else
@@ -235,38 +286,54 @@ void CLexer::checkType(const QString& type_string)
 	}
 }
 
- uint32 CLexer::getRegNumber(const QString & token)
+void CLexer::setArgType(EArgumentType argType)
 {
-	 int reg_num = token.right(token.size() - 1).toInt();
+	switch (m_codeTokens.last().argValue.size())
+	{
+	case 1:
+		m_codeTokens.last().opcode.arg1Type = static_cast<uint16>(argType);
+		break;
+	case 2:
+		m_codeTokens.last().opcode.arg2Type = static_cast<uint16>(argType);
+		break;
+	case 3:
+		m_codeTokens.last().opcode.arg3Type = static_cast<uint16>(argType);
+		break;
+	}
+}
 
-	 if ((token[0] == 'r') && (reg_num >= 0 && reg_num <= 1023))
-	 {
-		 return reg_num + 9;
-	 }
-	 else if ((token[0] == 'a') && (reg_num >= 0 && reg_num <= 3))
-	 {
-		 return reg_num;
-	 }
-	 else if (token== "IP")
-	 {
-		 return 4;
-	 }
-	 else if (token == "TR")
-	 {
-		 return 5;
-	 }
-	 else if (token== "SP")
-	 {
-		 return 6;
-	 }
-	 else if (token == "SF")
-	 {
-		 return 7;
-	 }
-	 else if (token == "FLAGS")
-	 {
-		 return 8;
-	 }
+uint32 CLexer::getRegNumber(const QString & token)
+{
+	int reg_num = token.right(token.size() - 1).toInt();
+
+	if ((token[0] == 'r') && (reg_num >= 0 && reg_num <= 1023))
+	{
+		return reg_num + 9;
+	}
+	else if ((token[0] == 'a') && (reg_num >= 0 && reg_num <= 3))
+	{
+		return reg_num;
+	}
+	else if (token == "IP")
+	{
+		return 4;
+	}
+	else if (token == "TR")
+	{
+		return 5;
+	}
+	else if (token == "SP")
+	{
+		return 6;
+	}
+	else if (token == "SF")
+	{
+		return 7;
+	}
+	else if (token == "FLAGS")
+	{
+		return 8;
+	}
 }
 
 bool CLexer::isDelimiter(QChar ch)
@@ -277,3 +344,16 @@ bool CLexer::isDelimiter(QChar ch)
 	}
 	return false;
 }
+
+bool CLexer::IsAlNum(QString ch)
+{
+	for (const QChar& a : ch)
+	{
+		if (!a.isLetterOrNumber())
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
