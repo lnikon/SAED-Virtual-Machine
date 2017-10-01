@@ -77,12 +77,13 @@ private: // functions
 										// return 1 - single value
 										// return 2 - array without size
 										// return other value - array size + 3
-	
+
 	void setNumber(QString& buffer); // m_dataTocen.value.last() = number;
 	QString makeName(QString& buffer); // ex. buffer = "name[20]", return "name"
-	bool isRegsiter(QString& buffer); // return true if buffer is register
+	bool isRegister(QString& buffer); // return true if buffer is register
 	bool isNumber(QString& buffer);
 	bool isVariable(QString& buffer);
+	bool checkSymbols(QString& buffer); // check symbols of buffer 
 };
 
 

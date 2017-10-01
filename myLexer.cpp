@@ -161,7 +161,11 @@ void myLexer::start(QTextStream& in)
 				case myLexer::State::codeArgument:
 
 					if (m_codeToken.last().argName.size() < 3) {
-						if (isRegsiter(buffer))
+						if (checkSymbols(buffer))
+						{
+							throw Error("wrong syntax of name: ", buffer, line);
+						}
+						else if (isRegister(buffer))
 						{
 							m_codeToken.last().argName.push_back(qMakePair(buffer, EArgumentType::Register));
 						}
@@ -232,38 +236,59 @@ bool myLexer::isDelimiter(char c)
 
 int myLexer::checkDataName(QString& buffer)
 {
-	if (buffer[0].isDigit()) return 0;
-	for (int i(0); i < buffer.size(); ++i)
-		if (buffer[i].isDigit() || buffer[i] == '[')
-			return 0; // wrong name
-		else
-			break;
-
-	if (buffer[buffer.size() - 1] == ']')
-	{
-		for (int i(0); i < buffer.size() - 1; ++i)
-		{
-			if (buffer[i] == '[')
-			{
-				if (buffer.size() - i == 2)
-				{
-					return 2; // array without size
-				}
-				else
-				{
-					QString number;
-					for (int j = i + 1; j < buffer.size() - 1; ++j)
-						number += buffer[j];
-					for (int j(0); j < number.size(); ++j)
-						if (!number[j].isDigit())
-							return 0; // worng name
-					return number.toInt() + 3; // array with size
-				}
-			}
-		}
+	if (buffer[0].isDigit()) return 0; // name can't start with number	
+	int count = 0; // count '[' and ']'
+	for (int i(0); i < buffer.size(); ++i) { // check symphols
+		if (!buffer[i].isDigit() && !buffer[0].isLetter() && buffer[i] != '[' && buffer[i] != ']')
+			return 0;
+		else if (buffer[i] == '[') ++count;
+		else if (buffer[i] == ']') --count;
 	}
-	return 1; // siple name, array with one value, size = 1
+	if (count != 0) return 0; // when count of symbol '[' and count of symbol ']' is not equal
+	QString name = makeName(buffer);
+	if (name == buffer) return 1; // name is single array, without size
+	if (buffer[buffer.size() - 1] != ']') return 0; // last symbol is not ']'
+	if (buffer.size() - name.size() == 2) return 2; // array witout size, ex. name[]
+	QString value; // for save value between '[' and ']' symbols	
+	for (int i(name.size()); i < buffer.size() - 1; ++i) value += buffer[i];	
+	if (!isNumber(value)) return 0;
+	return value.toInt() + 3; // when array has a size 
 }
+
+//int myLexer::checkDataName(QString& buffer)
+//{
+//	if (buffer[0].isDigit()) return 0; // name can't start with number
+//	for (int i(0); i < buffer.size(); ++i)
+//		if (buffer[i].isDigit() || buffer[i] == '[')
+//			return 0; // wrong name
+//		else
+//			break;
+//
+//	if (buffer[buffer.size() - 1] == ']')
+//	{
+//		for (int i(0); i < buffer.size() - 1; ++i)
+//		{
+//			if (buffer[i] == '[')
+//			{
+//				if (buffer.size() - i == 2)
+//				{
+//					return 2; // array without size
+//				}
+//				else
+//				{
+//					QString number;
+//					for (int j = i + 1; j < buffer.size() - 1; ++j)
+//						number += buffer[j];
+//					for (int j(0); j < number.size(); ++j)
+//						if (!number[j].isDigit())
+//							return 0; // worng name
+//					return number.toInt() + 3; // array with size
+//				}
+//			}
+//		}
+//	}
+//	return 1; // siple name, array with one value, size = 1
+//}
 
 void myLexer::setNumber(QString& buffer)
 {
@@ -300,13 +325,16 @@ QString myLexer::makeName(QString& buffer)
 	return name;
 }
 
-bool myLexer::isRegsiter(QString& buffer)
+bool myLexer::isRegister(QString& buffer)
 {
-	if (buffer[0] != 'R' || buffer.size() < 2) return false;
-	for (int i(1); i < buffer.size(); ++i)
-		if (!buffer[i].isDigit())
-			return false;
-	return true;
+	if (buffer[0] != 'R' || buffer[1] != '[' || buffer[buffer.size() - 1] != ']' || buffer.size() < 4) return false;
+	QString argument; 
+	for (int i(2); i < buffer.size() - 1; ++i)
+		argument += buffer[i];
+	if (isNumber(argument)) return true;
+	else if (isVariable(argument)) return true;
+	else if (isRegister(argument)) return true;
+	return false;
 }
 bool myLexer::isNumber(QString& buffer)
 {
@@ -318,8 +346,37 @@ bool myLexer::isNumber(QString& buffer)
 bool myLexer::isVariable(QString& buffer)
 {
 	QString name = makeName(buffer);
-	for (int i(0); i < m_dataToken.size(); ++i)
-		if (m_dataToken[i].dataName == name)
-			return true;
-	return false;
+	if (name == buffer) { 
+		for (int i(0); i < m_dataToken.size(); ++i)
+			if (m_dataToken[i].dataName == name)
+				return true; // single name
+	}
+	else
+	{
+		if (buffer[buffer.size() - 1] != ']') return false; // last symbol is not ']'
+		if (buffer.size() - name.size() == 2) return false; // array witout size, ex. name[]
+		for (int i(0); i < m_dataToken.size(); ++i)
+			if (m_dataToken[i].dataName == name) {
+				QString value; // for save value between '[' and ']' symbols	
+				for (int i(name.size() + 1); i < buffer.size() - 1; ++i)
+					value += buffer[i];
+				if (isVariable(value)) return true;
+				else if (isRegister(value)) return true;
+				else if (isNumber(value)) return true;
+			}
+		return false;
+	}
+	
+}
+
+bool myLexer::checkSymbols(QString& buffer)
+{
+	int count = 0; // count '[' and ']'
+	for (int i(0); i < buffer.size(); ++i) { // check symphols
+		if (!buffer[i].isDigit() && !buffer[0].isLetter() && buffer[i] != '[' && buffer[i] != ']')
+			return 0; 
+		else if (buffer[i] == '[') ++count;
+		else if (buffer[i] == ']') --count;
+	}
+	return count != 0; // false when count of symbol '[' and count of symbol ']' is not equal
 }
