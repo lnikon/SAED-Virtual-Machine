@@ -1,9 +1,15 @@
 #include"Ram.h"
 
+CRam::CRam()
+{
+	m_uiSize = 4096;
+	m_ucMemory = new unsigned char[m_uiSize];
+}
+
 CRam::CRam(unsigned int size)
 {
 	m_uiSize = size;
-	m_ucMemory = new unsigned char[size];
+	m_ucMemory = new unsigned char[m_uiSize];
 }
 
 CRam::~CRam()
@@ -29,21 +35,4 @@ void CRam::setIP(unsigned int newIP)
 unsigned char& CRam::operator[](unsigned int position) 
 {
 	return m_ucMemory[position];
-}
-
-void CRam::resize(unsigned int size)
-{
-	unsigned char* newMemory = new unsigned char(size);
-	for (int i(0); i < m_uiSize && i < size; ++i)
-	{
-		newMemory[i] = m_ucMemory[i];
-	}
-	m_uiSize = size;
-	delete[] m_ucMemory;
-	m_ucMemory = newMemory;
-}
-
-void CRam::reserve(unsigned int size)
-{
-	resize(size + m_uiSize);
 }

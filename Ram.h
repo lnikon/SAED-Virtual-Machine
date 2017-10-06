@@ -4,18 +4,17 @@
 class CRam
 {
 public:
-	CRam(unsigned int size);
+	CRam(); // default capacity = 4096;
+	CRam(unsigned int capacity);
 	~CRam();
 
 	unsigned int getIP();
 	void setIP(unsigned int newIP);
 
 	unsigned char& operator[](unsigned int position);
-	
-	unsigned int getSize();
-	void resize(unsigned int size); 
-	void reserve(unsigned int size);
 
+	unsigned int getSize();
+		
 private:
 	unsigned int m_uiSize;
 	unsigned int m_uiIP;
