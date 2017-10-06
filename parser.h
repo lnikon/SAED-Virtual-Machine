@@ -15,16 +15,17 @@ enum ESctionType {
 	Data, Code, SymbolTable, DebugInfo
 };
 
-struct SHeaderTable{
+struct SHeaderTable {
 	SHeaderTable(ESctionType tt, int oo, int ss) : type(tt), offset(oo), size(ss)
 	{
 	}
+	SHeaderTable() {}
 	ESctionType type;
 	int offset;
 	int size;
 };
 
-struct SHeader{
+struct SHeader {
 	SHeader(QString ss, int vv) :signature(ss), version(vv)
 	{
 	}
@@ -47,12 +48,12 @@ private:
 	void writeCodeTokens(QDataStream&);
 	uint16 getArgCode(QString argName);
 private:
-//	SHeader m_SHeader;
+	//	SHeader m_SHeader;
 	QVector<SDataToken> m_dataTokens;
 	QVector<SCodeToken> m_codeTokens;
 	QHash<QString, int> m_nameGrammar;
 	QDataStream m_out;
-	
+
 };
 
 
