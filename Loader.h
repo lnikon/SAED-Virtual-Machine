@@ -5,7 +5,6 @@
 #include "parser.h"
 #include <QTextStream>
 #include <QDataStream>
-#include <iostream>
 #include <string>
 
 using namespace std;
