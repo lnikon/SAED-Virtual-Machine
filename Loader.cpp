@@ -67,7 +67,6 @@ int CLoader::getInt(QDataStream& in)
 		in.operator>>(c);
 		version <<= 8;
 		version += static_cast<int> (c);
-		cout << i << ": " << version << endl;
 	}
 	return version;
 }
