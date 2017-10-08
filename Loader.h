@@ -7,8 +7,6 @@
 #include <QDataStream>
 #include <string>
 
-using namespace std;
-
 class CLoader
 {
 public:

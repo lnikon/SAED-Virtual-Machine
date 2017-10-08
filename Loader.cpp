@@ -20,7 +20,7 @@ void CLoader::work(CRam& ram, QDataStream& in)
 		sections.push_back(SHeaderTable(type, offset, size));
 	}
 
-	string fileBody;
+	std::string fileBody;
 	qint8 c;
 	while (!in.atEnd())
 	{
