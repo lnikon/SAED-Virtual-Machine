@@ -22,7 +22,7 @@ void CLexer::work(QTextStream & in)
 			state = EState::Comment;
 		}
 
-		if (isDelimiter(ch))
+		if (checkDelimiter(ch, state))
 		{
 			if (buffer == ".code")
 			{
@@ -103,6 +103,11 @@ QVector<SCodeToken> CLexer::getCode() const
 	return m_codeTokens;
 }
 
+QVector<QString> CLexer::getDataTable() const
+{
+	return m_data;
+}
+
 bool CLexer::isDigit(const QString & token)
 {
 	for (int i = 0; i < token.size(); i++)
@@ -120,15 +125,13 @@ void CLexer::checkCommand(const QString & command)
 	if (inst.contains(command))
 	{
 		m_codeTokens.push_back(SCodeToken(m_line));
-		m_argCount = inst[command].argument_count;
-		m_codeTokens.last().opcode.instr = static_cast<uint16>(inst[command].instr_code);
-		m_codeTokens.last().opcode.argSize = static_cast<uint16>(inst[command].argument_type);
+		m_argCount = inst[command].argumentCount;
+		m_codeTokens.last().opcode.instr = static_cast<uint16>(inst[command].instrCode);
+		m_codeTokens.last().opcode.argSize = static_cast<uint16>(inst[command].argumentType);
 	}
 	else
 	{
-		//throw CommandError(command,m_line);
 		throw CError(command + " on line " + QString::number(m_line) + " can't be used as command");
-
 	}
 }
 
@@ -142,7 +145,7 @@ void CLexer::checkArgument(const QString & argument)
 	}
 	else if (m_data.contains(argument))
 	{
-		m_codeTokens.last().argValue.push_back(m_data[argument]);
+		m_codeTokens.last().argValue.push_back(m_data.indexOf(argument));
 		setArgType(EArgumentType::Data);
 	}
 	else if (isDigit(argument))
@@ -168,49 +171,50 @@ void CLexer::checkIdentifier(const QString & identifier)
 		QString tmp = identifier.split('[')[1].split(']')[0];
 		if (!tmp.isEmpty())
 		{
-			m_dataTokens.last().count = tmp.toInt();
+			m_dataTokens.last().quantity = tmp.toInt();
 		}
 		else
 		{
-			m_dataTokens.last().count = -2;
+			m_dataTokens.last().quantity = -2;
 		}
 	}
 	else if (IsAlNum(identifier))
 	{
-		m_dataTokens.last().count = -1;
+		m_dataTokens.last().quantity = -1;
 	}
 	else
 	{
 
 	}
-	m_dataTokens.last().identifierName = identifier;
-	m_data.insert(identifier, m_dataOffset++);
+	//m_dataTokens.last().identifierName = identifier;
+	m_data.push_back(identifier);
 }
 
-// isn't ready
 void CLexer::checkValue(const QString & value)
 {
-	const int32 count = m_dataTokens.last().count;
+	const int32 count = m_dataTokens.last().quantity;
 	if (count == -1)
 	{
 		if (isDigit(value))
 		{
+			QDataStream tmp(&m_dataTokens.last().value, QIODevice::WriteOnly);
+
 			switch (m_dataTokens.last().type)
 			{
 			case EType::Byte:
 			{
-				uint8 val = value.toInt();
-				m_dataTokens.last().value = val;
+				uint8 val = value.toUShort();
+				tmp << val;
 				break;
 			}
 			case EType::Word:
-				m_dataTokens.last().value = value.toShort();
+				tmp << value.toShort();
 				break;
 			case EType::Dword:
-				m_dataTokens.last().value = value.toInt();
+				tmp << value.toInt();
 				break;
 			case EType::Qword:
-				m_dataTokens.last().value = value.toLongLong();
+				tmp << value.toLongLong();
 				break;
 			default:;
 			}
@@ -263,21 +267,6 @@ void CLexer::checkType(const QString& type_string)
 {
 	if (HType.contains(type_string))
 	{
-		/*switch (HType[type_string])
-		{
-		case EType::Byte:
-			m_dataOffset += 1;
-			break;
-		case EType::Word:
-			m_dataOffset += 2;
-			break;
-		case EType::Dword: 
-			m_dataOffset += 4;
-			break;
-		case EType::Qword:
-			m_dataOffset += 8;
-			break;
-		}*/
 		m_dataTokens.push_back(SDataToken(HType[type_string], m_line));
 	}
 	else
@@ -336,8 +325,25 @@ uint32 CLexer::getRegNumber(const QString & token)
 	}
 }
 
-bool CLexer::isDelimiter(QChar ch)
+bool CLexer::checkDelimiter(QChar ch, EState state)
 {
+	switch (state)
+	{
+	case EState::Init: break;
+	case EState::CodeCommand: break;
+	case EState::CodeArgument: break;
+	case EState::DataType:
+		if (ch == ' ' || ch == '\t')
+		{
+			return true;
+		}
+		else
+			break;
+	case EState::DataIdentifier: break;
+	case EState::DataValue: break;
+	case EState::Comment: break;
+	default:;
+	}
 	if (ch == ' ' || ch == '\t' || ch == '\n' || ch == ',' || ch == '=' || ch == ';')
 	{
 		return true;
@@ -356,4 +362,3 @@ bool CLexer::IsAlNum(QString ch)
 	}
 	return true;
 }
-

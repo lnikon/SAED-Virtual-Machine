@@ -2,55 +2,22 @@
 #define LEXER_H
 
 #include <QVarLengthArray>
-#include <QVariant>
 #include <QDebug>
-#include <QDataStream>
+#include <QByteArray>
 #include "instructions.h"
-
-struct SDataToken
-{
-	SDataToken()
-	{
-	}
-	SDataToken(EType t, uint32 l)
-		: type(t), line(l)
-	{
-	}
-
-	EType type;
-	QString identifierName;
-	QVariant value;
-	int32 count;
-	uint32 line;
-};
-
-struct SCodeToken
-{
-	SCodeToken()
-	{
-	}
-	SCodeToken(uint32 l)
-		: line(l)
-	{
-	}
-
-	//QString instructionName;
-
-	QVarLengthArray<uint32, 3> argValue;
-
-	UOpcode opcode;
-	uint32 line;
-};
+#include "Tokens.h"
+#include <QDataStream>
 
 class CLexer
 {
 public:
-	explicit CLexer()
-	{
-	}
+
 	void work(QTextStream& in);
+
 	QVector<SDataToken> getData() const;
 	QVector<SCodeToken> getCode() const;
+	QVector<QString> getDataTable() const;
+
 	void p()
 	{
 		for (auto a : m_data)
@@ -60,6 +27,12 @@ public:
 	}
 
 private:
+	enum class EState
+	{
+		Init, CodeCommand, CodeArgument, DataType, DataIdentifier,
+		DataValue, Comment
+	};
+
 	bool isDigit(const QString &);
 	bool isRegister(const QString &);
 
@@ -67,7 +40,7 @@ private:
 	void checkArgument(const QString& argument);
 	void checkIdentifier(const QString& identifier);
 	void checkValue(const QString& value);
-	bool isDelimiter(QChar ch);
+	bool checkDelimiter(QChar ch, EState);
 	bool IsAlNum(QString ch);
 	void checkType(const QString& type_string);
 	void setArgType(EArgumentType argType);
@@ -77,15 +50,12 @@ private:
 	int32 m_argCount = 0;
 	QVector<SDataToken> m_dataTokens;
 	QVector<SCodeToken> m_codeTokens;
-	QHash<QString, uint32> m_data;
+	QVector<QString> m_data;
 	uint32 m_dataOffset = 0;
-
-	enum class EState
-	{
-		Init, CodeCommand, CodeArgument, DataType, DataIdentifier,
-		DataValue, Comment
-	};
+	QVector<QString> ErrorLog;
 };
+
+
 
 class CLexerError : public CError
 {
