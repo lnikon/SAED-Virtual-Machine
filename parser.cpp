@@ -4,11 +4,10 @@ void CParser::work(CReaderWriter* writer, QVector<SDataToken> dataTokens, QVecto
 {
 	m_dataTokens = dataTokens;
 	m_codeTokens = codeTokens;
-	//	writer->addSection(writeHeader(writer->getSignature(), writer -> getVersion()), filename);
 	writer->addSection(writeDataSection());
 	writer->addSection(writeCodeSection());
 	writer->addSection(writeDataTableSection());
-	//writer->addSection(writeCodeTableSection());
+//	writer->addSection(writeCodeTableSection());
 	writer->write(filename);
 }
 
@@ -85,7 +84,7 @@ QByteArray CParser::writeCodeTableSection()
 	out << m_codeTokens[i].opcode.opcode;
 
 	}*/
-	//	return offset;
+//	return offset;
 	return out;
 }
 

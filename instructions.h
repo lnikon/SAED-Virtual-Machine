@@ -2,6 +2,7 @@
 #define INSTRUCTIONS_H
 
 #include <QHash>
+#include <QVarLengthArray>
 
 enum class EInstruction;
 enum class EArgumentType;

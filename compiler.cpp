@@ -29,6 +29,6 @@ void CCompiler::work(QString txtFileName, QString exeFileName)
 	catch (CError& e)
 	{
 		qDebug() << e.ShowError();
-	}	
+	}
 }
 

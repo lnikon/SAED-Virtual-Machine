@@ -1,17 +1,14 @@
 #include "readerwriter.h"
 
 CReaderWriter::CReaderWriter() :
-m_nVersion(1), m_sSignature("SAED/VirtualMachine/ExeFile"), m_headerSize(128)
+m_nVersion(1), m_sSignature("SAED/VirtualMachine/ExeFile"), m_nHeaderSize(128)
 {
 }
 void CReaderWriter::addSection(QByteArray buf)
 {
-	//	static int i = 0;
 	m_buffer.append(buf);
 	addSectionToHeader(m_SHeader.recordCount, buf);
 	++m_SHeader.recordCount;
-	//	addSectionToHeader(i, buf);
-	//	++i;
 }
 void CReaderWriter::addSectionToHeader(int i, QByteArray buf)
 {
@@ -20,8 +17,7 @@ void CReaderWriter::addSectionToHeader(int i, QByteArray buf)
 
 int CReaderWriter::getOffset(int i)
 {
-
-	int offset = m_headerSize;
+	int offset = m_nHeaderSize;
 	while (i)
 	{
 		offset += m_SHeader.recordTable[i - 1].offset;
@@ -34,9 +30,10 @@ void CReaderWriter::write(QString filename)
 {
 
 	QFile file(filename);
+	file.resize(0);
 	file.open(QIODevice::WriteOnly | QIODevice::Append);
 	QDataStream out(&file);
-
+	
 	//write header section in .exe file
 	createHeader();
 	out << m_SHeader.sSignature;
@@ -53,7 +50,7 @@ void CReaderWriter::write(QString filename)
 	}
 
 	// allign before m_headerSize bytes for DataSection
-	while (header_size != m_headerSize)
+	while (header_size != m_nHeaderSize)
 	{
 		out << static_cast<char>(0);
 		++header_size;
@@ -82,5 +79,15 @@ QByteArray CReaderWriter::read(QString sFileExe)
 	in >> output;
 	return output;
 }
-
-
+QString CReaderWriter::getSignature() const
+{
+	return m_sSignature;
+}
+int32 CReaderWriter::getVersion() const
+{
+	return m_nVersion;
+}
+int32 CReaderWriter::getHeaderSize() const
+{
+	return m_nHeaderSize;
+}

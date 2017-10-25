@@ -37,7 +37,6 @@ struct SHeader{
 	static int32 recordCount;
 	QVector<SHeaderTable> recordTable;
 };
-//int32 SHeader::recordCount = 0;
 
 
 #endif

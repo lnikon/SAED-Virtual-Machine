@@ -9,12 +9,12 @@
 class CDisassembler
 {
 public:
-    CDisassembler();
-    void work(QString sFileExe, QString sFileTxt);
+	CDisassembler();
+	void work(QString sFileExe, QString sFileTxt);
 private:
-    CReaderWriter* m_reader;
-    CDisParser* m_disParser;
-    CCodeGenerator* m_codeGenerator;
+	CReaderWriter* m_reader;
+	CDisParser* m_disParser;
+	CCodeGenerator* m_codeGenerator;
 };
 
 

@@ -17,7 +17,7 @@ using uint16 = unsigned short;
 class CParser
 {
 public:
-	CParser::CParser()
+	CParser()
 	{
 	}
 	void work(CReaderWriter* writer, QVector<SDataToken> dataTokens, QVector<SCodeToken> codeTokens, QString filename);

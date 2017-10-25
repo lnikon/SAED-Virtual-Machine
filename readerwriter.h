@@ -16,20 +16,23 @@ class CReaderWriter
 {
 public:
 	CReaderWriter();
-
+		
 	void addSection(QByteArray buf);
 	void write(QString filename);
-
 	QByteArray read(QString sFileExe);
 
-private:
-	void createHeader();
-	QByteArray writeHeader(QString signature, int32 version);
-	void addSectionToHeader(int i, QByteArray buf);
-	int getOffset(int i);
+	QString getSignature() const;
+	int32 getVersion() const;
+	int32 getHeaderSize() const;
+
+private:		
+		void createHeader();
+		QByteArray writeHeader(QString signature, int32 version);
+		void addSectionToHeader(int i, QByteArray buf);
+		int getOffset(int i);
 
 private:
-	int32 m_headerSize;
+	int32 m_nHeaderSize;	//128 bytes
 	int32 m_nVersion;
 	QString m_sSignature;
 	SHeader m_SHeader;
