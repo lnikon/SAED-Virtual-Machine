@@ -17,10 +17,19 @@ class CReaderWriter
 public:
 	CReaderWriter();
 		
-	void addSection(QByteArray buf);
-	void write(QString filename);
+	// methods fpr access to the file content	
+	int getSectionCount() const;
+	QString getSectionName(int nIndex) const;
+	QByteArray getSection(int nIndex) const;
+	QByteArray getSection(QString const& sName) const;
 
-	QByteArray read(QString sFileExe);
+	// Adds specifed section toi the executable file
+	void addSection(QString const& sName, QByteArray const& aData);
+
+	// Writes files to the disk with specified path
+	void write(QString filename);
+	// Reads file from the disk
+	void read(QString sFileExe);
 	
 private:		
 		void createHeader();
@@ -33,7 +42,7 @@ private:
 	int32 m_nVersion;
 	QString m_sSignature;
 	SHeader m_SHeader;
-	QByteArray m_buffer;
+	QVector< QPair<QString, QByteArray> > m_aSections;
 };
 
 
