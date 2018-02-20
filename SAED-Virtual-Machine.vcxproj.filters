@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="compiler">
+      <UniqueIdentifier>{48f7ea89-02b3-4898-bf6f-583abf016b56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interpreter">
+      <UniqueIdentifier>{ca969cf0-cc59-475d-988c-e2a5a5c17bb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interpreter\headers">
+      <UniqueIdentifier>{45d6fb48-2665-4fef-985d-c03f20edf60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interpreter\sources">
+      <UniqueIdentifier>{abb01d1e-6330-470e-bec8-e660828b5b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="compiler\headers">
+      <UniqueIdentifier>{a8d330f1-869d-497e-8afe-90c0c2b14366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="compiler\sources">
+      <UniqueIdentifier>{ccbeeeba-d052-443b-952a-d73cbfe350e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{605ae316-fcb2-468e-9eee-4c61e5a52556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base\headers">
+      <UniqueIdentifier>{f93fed84-e34f-4aaa-8d9f-45779cc32fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base\sources">
+      <UniqueIdentifier>{6c9add44-346b-459c-a178-6ad900d1e7e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="i/o">
+      <UniqueIdentifier>{c3997607-97f3-492f-bf71-857f0a866fcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="i/o\headers">
+      <UniqueIdentifier>{613f11c8-88ba-4a07-b000-a253ddf05c09}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\compiler\compiler.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\header.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\lexer.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\parser.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\registers.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\tokens.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\instructions.h">
+      <Filter>base\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\readerwriter.h">
+      <Filter>base\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpreter\memory.h">
+      <Filter>interpreter\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpreter\processor.h">
+      <Filter>interpreter\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpreter\i_o_manager.h">
+      <Filter>i/o\headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\compiler\compiler.cpp">
+      <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\lexer.cpp">
+      <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\parser.cpp">
+      <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\readerwriter.cpp">
+      <Filter>base\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interpreter\processor.cpp">
+      <Filter>interpreter\sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
