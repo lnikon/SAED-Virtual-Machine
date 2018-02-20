@@ -196,43 +196,6 @@ public:
 		inline SArgument();
 	};
 
-
-	struct SCommandContext
-	{
-		typedef void (IExecutor::* FnCommand)(SState& tMachineState, SCommandContext& tCommand);
-		typedef bool (CFlags::* FnCondition)() const;
-
-		FnCommand	pfnCommand;
-		FnCondition	pfnCondition;
-
-		EOpSize		eOpSize;
-
-		SArgument	tArg1;
-		SArgument	tArg2;
-		SArgument	tArg3;
-
-		uint32		nLine;
-
-		inline SCommandContext();
-	};
-
-	// Decode filter
-	class IDecodeFilter
-	{
-	public:
-		virtual ~IDecodeFilter();
-
-		// Preprocesses command
-		// Returns true if command execution should be continued
-		// Returns false if command should be skipped
-		// Default implementation does nothing and always returns true
-		virtual bool Preprocess(std::string& sCommand);
-		// Parses argument string and returns it
-		// Default implementation return empty argument which means not handled
-		virtual SArgument ParseArgument(std::string const& sArgument);
-	};
-	using IDecodeFilterPtr = std::shared_ptr<IDecodeFilter>;
-
 public:
 	//
 	//	Construction & Destruction
@@ -254,8 +217,6 @@ public:
 	void AttachDebugger(IDebuggerPtr pDebugger);
 	void DetachDebugger();
 
-	void SetDecodeFilter(IDecodeFilterPtr pDecodeFilter);
-
 	void Run(CException* pError = nullptr);
 	void Stop();
 	inline bool IsRunning() const;
@@ -270,9 +231,7 @@ public:
 	inline void SetPC(t_index nNewPC);
 
 protected:
-	//
-	//	Implementation
-	//
+	
 	std::string Fetch();
 	SCommandContext Decode(std::string& sCommand);
 	void Execute(SCommandContext& tCommand);
