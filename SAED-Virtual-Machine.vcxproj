@@ -19,6 +19,7 @@
     <ClInclude Include="src\compiler\readerwriter.h" />
     <ClInclude Include="src\compiler\registers.h" />
     <ClInclude Include="src\compiler\tokens.h" />
+    <ClInclude Include="src\interpreter\interpreter.h" />
     <ClInclude Include="src\interpreter\i_o_manager.h" />
     <ClInclude Include="src\interpreter\loader.h" />
     <ClInclude Include="src\interpreter\memory.h" />
@@ -30,6 +31,7 @@
     <ClCompile Include="src\compiler\main.cpp" />
     <ClCompile Include="src\compiler\parser.cpp" />
     <ClCompile Include="src\compiler\readerwriter.cpp" />
+    <ClCompile Include="src\interpreter\interpreter.cpp" />
     <ClCompile Include="src\interpreter\loader.cpp" />
     <ClCompile Include="src\interpreter\processor.cpp" />
   </ItemGroup>

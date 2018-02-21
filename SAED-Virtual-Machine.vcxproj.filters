@@ -77,6 +77,9 @@
     <ClInclude Include="src\interpreter\loader.h">
       <Filter>interpreter\headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\interpreter\interpreter.h">
+      <Filter>interpreter\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\compiler\compiler.cpp">
@@ -98,6 +101,9 @@
       <Filter>interpreter\sources</Filter>
     </ClCompile>
     <ClCompile Include="src\interpreter\loader.cpp">
+      <Filter>interpreter\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interpreter\interpreter.cpp">
       <Filter>interpreter\sources</Filter>
     </ClCompile>
   </ItemGroup>
