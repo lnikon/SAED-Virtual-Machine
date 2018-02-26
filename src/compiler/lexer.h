@@ -4,10 +4,9 @@
 #include <QVarLengthArray>
 #include <QDebug>
 #include <QByteArray>
-#include <QDataStream>
-
 #include "instructions.h"
 #include "Tokens.h"
+#include <QDataStream>
 
 class CLexer
 {
@@ -55,6 +54,8 @@ private:
 	uint32 m_dataOffset = 0;
 	QVector<QString> ErrorLog;
 };
+
+
 
 class CLexerError : public CError
 {

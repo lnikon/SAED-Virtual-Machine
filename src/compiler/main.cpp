@@ -13,8 +13,10 @@ int main(int argc, char *argv[])
 	QCoreApplication aaa(argc, argv);
 
 	CCompiler compiler;
-
 	compiler.work("test.asm", "test.txt");
 
+
+
+	exit(1);
 	return aaa.exec();
 }

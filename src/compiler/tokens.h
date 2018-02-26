@@ -29,10 +29,14 @@ struct SCodeToken
 	{
 	}
 
+	//QString instructionName;
+
 	QVarLengthArray<uint32, 3> argValue;
 
 	UOpcode opcode;
 	uint32 line;
 };
+
+//DataTable returned by QHash<QString, uint32> CLexer::getDataTable() function
 
 #endif // !TOKENS_H

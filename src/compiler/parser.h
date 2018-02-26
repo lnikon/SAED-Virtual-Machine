@@ -13,6 +13,8 @@
 #include <QFileInfo>
 #include <cmath>
 
+using uint16 = unsigned short;
+
 class CParser
 {
 public:
@@ -20,13 +22,12 @@ public:
 	{
 	}
 	void work(CReaderWriter* writer, QVector<SDataToken> dataTokens, QVector<SCodeToken> codeTokens,
-			  QVector<QString> dataTable, QString filename);
+		QVector<QString> dataTable, QString filename);
 public:
 	QByteArray writeDataSection();
 	QByteArray writeCodeSection();
 	QByteArray writeDataTableSection();
 	QByteArray writeCodeTableSection();
-
 	void testDataTableSection(QByteArray& dataTableSection);
 	void testDataSection(QByteArray& dataSection);
 	void testCodeSection(QByteArray& codeSectoion);
@@ -36,5 +37,6 @@ private:
 	QVector<QString> m_dataTable;
 	QHash<QString, int> m_nameGrammar;
 };
+
 
 #endif

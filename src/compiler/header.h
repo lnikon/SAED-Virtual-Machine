@@ -2,11 +2,10 @@
 #define HEADER_H
 
 #include <QVector>
-#include <QDebug>
+#include <qdebug.h>
+#include "instructions.h"
 #include <QDataStream>
 #include <QFileInfo>
-
-#include "instructions.h"
 
 enum class ESectionType
 {
@@ -16,12 +15,13 @@ enum class ESectionType
 const QMap<ESectionType, QString> MSections
 {
 	{ ESectionType::Data, "DataSection", },
-	{ ESectionType::Code, "CodeSection", },
-	{ ESectionType::DataTable, "DataTableSection", },
-	{ ESectionType::CodeTable, "CodeTableSection", }
+{ ESectionType::Code, "CodeSection", },
+{ ESectionType::DataTable, "DataTableSection", },
+{ ESectionType::CodeTable, "CodeTableSection", }
 };
 
-struct SHeaderTable{
+
+struct SHeaderTable {
 	SHeaderTable()
 	{
 	}
@@ -33,20 +33,27 @@ struct SHeaderTable{
 	int32 size;
 };
 
-struct SHeader{
+struct SHeader {
 	SHeader()
 	{
 	}
-
-	SHeader(QString ss, int32 vv) :sSignature(ss), nVersion(vv)
+	//SHeader(QString ss, int32 vv) :sSignature(ss), nVersion(vv)
+	SHeader(std::string ss, int32 vv) :sSignature(ss), nVersion(vv)
 	{
 	}
-
-	QString sSignature;
+	//	QString sSignature;
+	std::string sSignature;
 	int32 nVersion;
 	int32 recordCount;
 	QVector<SHeaderTable> recordTable;
 };
 //int32 SHeader::recordCount = 0;
 
+
 #endif
+
+
+
+
+
+

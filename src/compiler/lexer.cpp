@@ -1,4 +1,4 @@
-﻿#include "lexer.h"
+#include "lexer.h"
 
 void CLexer::work(QTextStream & in)
 {
