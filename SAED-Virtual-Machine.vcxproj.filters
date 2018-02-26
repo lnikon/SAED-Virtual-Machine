@@ -74,9 +74,6 @@
     <ClInclude Include="src\interpreter\i_o_manager.h">
       <Filter>i/o\headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\interpreter\loader.h">
-      <Filter>interpreter\headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\interpreter\interpreter.h">
       <Filter>interpreter\headers</Filter>
     </ClInclude>
@@ -98,9 +95,6 @@
       <Filter>base\sources</Filter>
     </ClCompile>
     <ClCompile Include="src\interpreter\processor.cpp">
-      <Filter>interpreter\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\interpreter\loader.cpp">
       <Filter>interpreter\sources</Filter>
     </ClCompile>
     <ClCompile Include="src\interpreter\interpreter.cpp">
