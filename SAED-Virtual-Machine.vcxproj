@@ -33,6 +33,7 @@
     <ClCompile Include="src\compiler\readerwriter.cpp" />
     <ClCompile Include="src\interpreter\interpreter.cpp" />
     <ClCompile Include="src\interpreter\loader.cpp" />
+    <ClCompile Include="src\interpreter\memory.cpp" />
     <ClCompile Include="src\interpreter\processor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

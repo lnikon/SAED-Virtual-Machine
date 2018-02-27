@@ -13,10 +13,10 @@ class CProcessor
 	
 public:
 
-	bool IsRunning();
-	void Run();
-	void Stop();
-	void Init(CMemory* memory, int PC, CIOManager* IOMan);
+	bool IsRunning() {}
+	void Run() {}
+	void Stop() {}
+	void Init(CMemory* memory, int PC, CIOManager* IOMan) {}
 
 public:
 

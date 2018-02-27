@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MEMORY_H
+#define MEMORY_H
 
 #include <QVector>
 
@@ -49,47 +50,4 @@ private:
 	QVector<uint8> m_aMemory;
 };
 
-CMemory::CMemory(uint32 ms)
-{
-	if (ms > 0)
-	{
-		m_aMemory.resize(ms);
-	}
-}
-
-inline void CMemory::SetStackSize(uint32 nStackSize)
-{
-	m_nStackSize = nStackSize;
-}
-
-inline uint32 CMemory::GetStackSize()
-{
-	return m_nStackSize;
-}
-
-inline uint32 CMemory::GetMemorySize()
-{
-	return m_aMemory.size();
-}
-
-inline uint8& CMemory::operator[](uint32 ind)
-{
-	return m_aMemory[ind];
-}
-
-inline const uint8& CMemory::operator[](uint32 ind) const
-{
-	return m_aMemory[ind];
-}
-
-template<typename T>
-inline T& CMemory::at(uint32 ind)
-{
-	return reinterpret_cast<T&>(m_aMemory[ind]);
-}
-
-template<typename T>
-inline constexpr T& CMemory::at(uint32 ind) const
-{
-	return reinterpret_cast<constexpr T&>(m_aMemory[ind]);
-}
+#endif // !MEMORY_H

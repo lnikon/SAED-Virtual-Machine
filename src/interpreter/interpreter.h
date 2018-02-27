@@ -1,8 +1,12 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
+
 #include "memory.h"
 #include "loader.h"
+#include "processor.h"
+
 #include <QTextStream>
+
 class CInterpreter
 {
 public:
@@ -16,16 +20,15 @@ public:
     void Reset();
     bool isRuning();
 
-    inline CCPU* getCPU();
-    inline CMemory* getMem();
+	inline CProcessor* getCPU() {}
+	inline CMemory* getMem() {}
 
 
 private:
-    CCPU* m_CPU;
+    CProcessor* m_CPU;
     CMemory* m_Memory;
-    CLoader* m_Loader;
-    //CIOManager* m_IOMan;
-
+    //CLoader* m_Loader;
+    CIOManager* m_IOMan;
 
 };
 
