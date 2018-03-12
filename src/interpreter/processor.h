@@ -69,7 +69,7 @@ public:
 		bool IsNotParity() const;
 
 	private:
-		uint16	m_ui16Value;
+		uint16 m_ui16Value;
 	};
 
 private:

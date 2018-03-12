@@ -55,16 +55,10 @@ union UOpcode
 	struct
 	{
 		uint16 instr : 8;
-		union
-		{
-			uint16 argType : 6;
-			struct
-			{
-				uint16 arg1Type : 2;
-				uint16 arg2Type : 2;
-				uint16 arg3Type : 2;
-			};
-		};
+		
+		uint16 arg1Type : 2;
+		uint16 arg2Type : 2;
+		uint16 arg3Type : 2;
 		uint16 argSize : 2;
 	};
 };
