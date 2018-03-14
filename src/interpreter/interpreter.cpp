@@ -1,6 +1,6 @@
 #include "interpreter.h"
 
-CInterpreter::CInterpreter()
+CInterpreter::CInterpreter() : m_pIOMan(*new CIOManager)
 {
 }
 
@@ -12,22 +12,20 @@ void CInterpreter::Init(QTextStream &input)
 {
 	Reset();
 
-	m_Memory = new CMemory;
-
-	m_IOMan = new CIOManager;
+	m_pMemory = std::make_shared<CMemory>();
 
 	//m_Loader = new CLoader;
 	//m_Loader->load(input, m_Memory);
 
-	m_CPU = new CProcessor;
-	m_CPU->Init(m_Memory, 1, m_IOMan);
+	m_pProcessor = std::make_unique<CProcessor>();
+	m_pProcessor->Init(m_pMemory, 1);
 
 }
 
 bool CInterpreter::isValid()
 {
-	if (m_Memory != nullptr /*&& m_Loader != nullptr*/
-		&& m_CPU != nullptr && m_IOMan != nullptr)
+	if (m_pMemory != nullptr /*&& m_Loader != nullptr*/
+		&& m_pProcessor != nullptr && &m_pIOMan != nullptr)
 	{
 		return true;
 	}
@@ -49,8 +47,8 @@ void CInterpreter::Stop()
 
 void CInterpreter::Reset()
 {
-	m_CPU = nullptr;
-	m_Memory = nullptr;
+	m_pProcessor = nullptr;
+	m_pMemory = nullptr;
 	//m_Loader = nullptr;
 	//m_IOMan = nullptr;
 }

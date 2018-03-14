@@ -14,21 +14,24 @@ public:
     ~CInterpreter();
 
     void Init (QTextStream &input);
-    bool isValid();
+
     void Run();
     void Stop();
     void Reset();
+
+    bool isValid();
     bool isRuning();
 
-	inline CProcessor* getCPU() {}
-	inline CMemory* getMem() {}
-
+	inline CProcessorPtr getCPU() {}
+	inline CMemoryPtr getMem() {}
 
 private:
-    CProcessor* m_CPU;
-    CMemory* m_Memory;
+    CProcessorPtr m_pProcessor;
+    CMemoryPtr m_pMemory;
     //CLoader* m_Loader;
-    CIOManager* m_IOMan;
+
+	//is this ok
+    CIOManager& m_pIOMan;
 
 };
 

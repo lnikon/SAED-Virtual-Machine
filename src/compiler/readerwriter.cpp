@@ -86,6 +86,8 @@ void CReaderWriter::write(QString filename)
 	testTheExeFile(filename);
 	SHeader h = readHeader(filename);
 
+	readDataSection(h, filename);
+
 }
 SHeader CReaderWriter::readHeader(QString filename)
 {
@@ -95,27 +97,27 @@ SHeader CReaderWriter::readHeader(QString filename)
 	QByteArray output = file.readAll();
 	QDataStream in(&file);
 
-	SHeader readHeader;
+//	SHeader m_readSHeader;
 
 	char ch;
 	int i = 1;
 	for (; i < m_sSignature.size() * 2; i += 2)		//as the sizeof qbytearray[i] = 16 bytes
 	{
 		ch = static_cast<char>(output[i]);
-		readHeader.sSignature += ch;
+		m_readSHeader.sSignature += ch;
 	}
-	std::cout << "readHeader.sSignature = " << readHeader.sSignature << std::endl;
-	std::cout << "readHeader.sSignature.size = " << readHeader.sSignature.size() << std::endl;
+	std::cout << "readHeader.sSignature = " << m_readSHeader.sSignature << std::endl;
+	std::cout << "readHeader.sSignature.size = " << m_readSHeader.sSignature.size() << std::endl;
 
 	file.seek(54);
-	in >> readHeader.nVersion;
-	qDebug() << "readHeader.nVersion = " << readHeader.nVersion;
+	in >> m_readSHeader.nVersion;
+	qDebug() << "readHeader.nVersion = " << m_readSHeader.nVersion;
 
 	file.seek(58);
-	in >> readHeader.recordCount;
-	qDebug() << "readHeader.recordCount = " << readHeader.recordCount;
+	in >> m_readSHeader.recordCount;
+	qDebug() << "readHeader.recordCount = " << m_readSHeader.recordCount;
 
-	for (int k = 0; k < readHeader.recordCount; k++)
+	for (int k = 0; k < m_readSHeader.recordCount; k++)
 	{
 		SHeaderTable hdt;
 		int sectype;
@@ -123,12 +125,12 @@ SHeader CReaderWriter::readHeader(QString filename)
 		hdt.eSectionType = static_cast<ESectionType>(sectype);
 		in >> hdt.offset;
 		in >> hdt.size;
-		readHeader.recordTable.push_back(hdt);
+		m_readSHeader.recordTable.push_back(hdt);
 		qDebug() << "hdt = " << static_cast<int>(hdt.eSectionType) << " " << hdt.offset << " " << hdt.size;
 	}
 
 	qDebug() << "\n\nend of testTheExeFile";
-	return readHeader;
+	return m_readSHeader;
 }		//OK		
 void CReaderWriter::testTheExeFile(QString filename)
 {
@@ -140,10 +142,12 @@ void CReaderWriter::testTheExeFile(QString filename)
 	QDataStream in(&file);
 
 
-	for (int pos = 0; pos < output.size(); ++pos)
+	/*for (int pos = 0; pos < output.size(); ++pos)
 	{
 		qDebug() << pos << static_cast<int>(output[pos]);
-	}
+	}*/
+
+
 	qDebug() << "\n\nend of testTheExeFile";
 
 	file.close();
@@ -183,126 +187,47 @@ void CReaderWriter::testHeader()
 
 	qDebug() << "\n\nend of RW::testHeader";
 }
-QVector<SDataToken> CReaderWriter::readDataTableSection(SHeader h, QString filename)
+QByteArray CReaderWriter::readDataTableSection(SHeader h, QString filename)
 {
-	qDebug() << "\n\nraedData Start\n\n";
-
-	qDebug() << "h.recordTable[0].offset = " << h.recordTable[0].offset;
-	qDebug() << "h.recordTable[2].offset = " << h.recordTable[2].offset;
 	QFile file(filename);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	QByteArray output = file.readAll();
-	QDataStream in(&file);
-
-	file.seek(h.recordTable[2].offset);
 	int secSize;
-	//	in >> secSize;
+//	qDebug() << "h.recordTable.size()  =" << h.recordTable.size();
 	secSize = h.recordTable[static_cast<int>(ESectionType::DataTable)].size;
-	qDebug() << "secSize = " << secSize;
-
-	QVector<SDataToken> VDTokens;
-
-	int currPos = file.pos();
-	for (int p = currPos; p < currPos + secSize;)
+	QByteArray out;
+	int size = m_headerSize;
+	file.seek(h.recordTable[static_cast<int>(ESectionType::DataTable)].offset);
+	int start = file.pos();
+	int j = 0;
+	for (int i = start; i < start + size; ++i)
 	{
-		SDataToken dt;
-		//	uint8 dataType;
-		int dataType;
-
-		in >> dataType;
-		dt.type = static_cast<EType>(dataType);
-		qDebug() << "dataType = " << dataType;
-
-		//		uint8 idNameSize;
-		int idNameSize;
-		in >> idNameSize;
-		std::string idName;
-		uint8 ch;
-		for (int j = 0; j < idNameSize; ++j)
-		{
-			in >> ch;
-			idName += ch;
-		}
-		dt.identifierName = QString::fromStdString(idName);
-		qDebug() << "idName = " << dt.identifierName;
-		int l;
-		in >> l;
-		dt.line = l;
-		qDebug() << "line = " << dt.line;
-		VDTokens.push_back(dt);
-		p = file.pos();
+		out[j] = output[i];
+		++j;
 	}
-	file.close();
-	return VDTokens;
-	qDebug() << "\n\nend of readData";
+	return out;
 }
-QVector<SDataToken> CReaderWriter::readDataSection(SHeader h, QVector<SDataToken> VDT, QString filename)
+QByteArray CReaderWriter::readDataSection(SHeader h, QString filename)
 {
-	qDebug() << "\n\nreadDataSection Start\n\n";
-
 	QFile file(filename);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	QByteArray output = file.readAll();
-	QDataStream in(&file);
+	QByteArray out;
 
-	file.seek(h.recordTable[0].offset + 4);
-	qDebug() << "pos = " << file.pos();
-	for (int i = 0; i < VDT.size(); ++i)
+	int size = m_headerSize;
+	file.seek(h.recordTable[static_cast<int>(ESectionType::Data)].offset);
+	int start = file.pos();
+
+	int j = 0;
+	for (int i = start; i < start + size; ++i)
 	{
-		if (VDT[i].type == EType::Byte)
-		{
-			uint8 val;
-			in >> val;
-			qDebug() << "val = " << val;
-			qDebug() << "pos = " << file.pos();
-			for (int j = 0; j != sizeof(val); ++j)
-			{
-				VDT[i].value.append((char)(val&(0xFF << i) >> i));
-				qDebug() << "value[i]" << static_cast<int>(VDT[i].value[j]);
-			}
-		}
-		if (VDT[i].type == EType::Word)
-		{
-			uint16 val;
-			in >> val;
-			qDebug() << "val = " << val;
-			qDebug() << "pos = " << file.pos();
-			for (int j = 0; j != sizeof(val); ++j)
-			{
-				VDT[i].value.append((char)(val&(0xFF << i) >> i));
-				qDebug() << "value[i]" << static_cast<int>(VDT[i].value[j]);
-			}
-		}
-		if (VDT[i].type == EType::Dword)
-		{
-			uint32 val;
-			in >> val;
-			qDebug() << "val = " << val;
-			qDebug() << "pos = " << file.pos();
-			for (int j = 0; j != sizeof(val); ++j)
-			{
-				VDT[i].value.append((char)(val&(0xFF << i) >> i));
-				qDebug() << "value[i]" << static_cast<int>(VDT[i].value[j]);
-			}
-		}
-		if (VDT[i].type == EType::Qword)
-		{
-			uint64 val;
-			in >> val;
-			qDebug() << "val = " << val;
-			qDebug() << "pos = " << file.pos();
-			for (int j = 0; j != sizeof(val); ++j)
-			{
-				VDT[i].value.append((char)(val&(0xFF << i) >> i));
-				qDebug() << "value[i]" << static_cast<int>(VDT[i].value[j]);
-			}
-		}
+		out[j] = output[i];
+		++j;
 	}
+	return out;
 	file.close();
-	qDebug() << "\n\nend of readDataSection\n\n";
-	return VDT;
 }
-void CReaderWriter::readCodeSection(SHeader h, QString filename)
+QByteArray CReaderWriter::readCodeSection(SHeader h, QString filename)
 {
 	qDebug() << "\n\nreadCodeSection Start\n\n";
 
@@ -314,40 +239,58 @@ void CReaderWriter::readCodeSection(SHeader h, QString filename)
 	file.seek(h.recordTable[1].offset);
 	int secSize;
 	secSize = h.recordTable[static_cast<int>(ESectionType::Code)].size;
-	//	in >> secSize;
 
+	QByteArray out;
+	int size = m_headerSize;
+	file.seek(h.recordTable[static_cast<int>(ESectionType::Code)].offset);
+	int start = file.pos();
 
-
-	QVector <SCodeToken> VCT;
-	int currPos = file.pos();
-	for (int pos = currPos; pos < currPos + secSize;)
+	int j = 0;
+	for (int i = start; i < start + size; ++i)
 	{
-		SCodeToken sct;
-		uint16 opcode;
-		in >> opcode;
-		sct.opcode.opcode = opcode;
-		//	VCT[i].opcode.opcode = opcode;
-		qDebug() << "opcode = " << opcode;
-
-		int count = HInstCount[opcode];
-		qDebug() << "count = " << count;
-		for (int i = 0; i < count; ++i)
-		{
-			uint32 arg;
-			in >> arg;
-			sct.argValue.append(arg);
-			//		VCT[i].argValue.append(arg);
-			qDebug() << "arg = " << arg;
-		}
-
-		//	uint8 l;
-		//	in >> l;
-		//	sct.line = l;
-		////	VCT[i].line = l;
-		//	qDebug() << "VCT[i].line = " << sct.line;
-		VCT.push_back(sct);
-		pos = file.pos();
+		out[j] = output[i];
+		++j;
 	}
+
+	//qDebug() << "out.size() = " << out.size();
+	//for (int i = 0; i < out.size(); ++i)
+	//{
+	//	qDebug() << "out[" << i << "] = " << static_cast<int>(out[i]);
+	//}
+
+	return out;
+
+
+	//QVector <SCodeToken> VCT;
+	//int currPos = file.pos();
+	//for (int pos = currPos; pos < currPos + secSize;)
+	//{
+	//	SCodeToken sct;
+	//	uint16 opcode;
+	//	in >> opcode;
+	//	sct.opcode.opcode = opcode;
+	//	//	VCT[i].opcode.opcode = opcode;
+	//	qDebug() << "opcode = " << opcode;
+
+	//	int count = HInstCount[opcode];
+	//	qDebug() << "count = " << count;
+	//	for (int i = 0; i < count; ++i)
+	//	{
+	//		uint32 arg;
+	//		in >> arg;
+	//		sct.argValue.append(arg);
+	//		//		VCT[i].argValue.append(arg);
+	//		qDebug() << "arg = " << arg;
+	//	}
+
+	//	//	uint8 l;
+	//	//	in >> l;
+	//	//	sct.line = l;
+	//	////	VCT[i].line = l;
+	//	//	qDebug() << "VCT[i].line = " << sct.line;
+	//	VCT.push_back(sct);
+	//	pos = file.pos();
+	//}
 	file.close();
 	qDebug() << "\n\nend of readCodeSection\n\n";
 }

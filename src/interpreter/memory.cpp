@@ -32,15 +32,3 @@ const uint8& CMemory::operator[](uint32 ind) const
 {
 	return m_aMemory[ind];
 }
-
-template<typename T>
-T& CMemory::at(uint32 ind)
-{
-	return reinterpret_cast<T&>(m_aMemory[ind]);
-}
-
-template<typename T>
-inline constexpr T& CMemory::at(uint32 ind) const
-{
-	return reinterpret_cast<constexpr T&>(m_aMemory[ind]);
-}

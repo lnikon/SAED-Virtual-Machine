@@ -80,6 +80,15 @@
     <ClInclude Include="src\interpreter\loader.h">
       <Filter>interpreter\headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\compiler\codegenerator.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\disassembler.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\disparser.h">
+      <Filter>compiler\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\compiler\compiler.cpp">
@@ -108,6 +117,15 @@
     </ClCompile>
     <ClCompile Include="src\interpreter\memory.cpp">
       <Filter>interpreter\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\codegenerator.cpp">
+      <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\disassembler.cpp">
+      <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\disparser.cpp">
+      <Filter>compiler\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

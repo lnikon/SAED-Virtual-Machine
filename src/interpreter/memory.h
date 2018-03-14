@@ -1,6 +1,8 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#include <memory>
+
 #include <QVector>
 
 #include "../compiler/instructions.h"
@@ -20,9 +22,8 @@ public:
 
 public:
 	CMemory(uint32 ms = 0);
+
 	~CMemory() = default;
-
-
 	CMemory(CMemory const&) = delete;
 	CMemory(CMemory&&) = delete;
 	void operator=(CMemory const&) = delete;
@@ -35,7 +36,6 @@ public:
 	uint32 GetMemorySize();
 
 public:
-
 	template <typename T>
 	T& at(uint32 ind);
 
@@ -48,6 +48,22 @@ public:
 private:
 	uint32 m_nStackSize = DefaultStackSize;
 	QVector<uint8> m_aMemory;
+
 };
+
+using CMemoryPtr = std::shared_ptr<CMemory>;
+
+
+template<typename T>
+T& CMemory::at(uint32 ind)
+{
+	return reinterpret_cast<T&>(m_aMemory[ind]);
+}
+
+template<typename T>
+inline constexpr T& CMemory::at(uint32 ind) const
+{
+	return reinterpret_cast<constexpr T&>(m_aMemory[ind]);
+}
 
 #endif // !MEMORY_H

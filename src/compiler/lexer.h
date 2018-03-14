@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QByteArray>
 #include "instructions.h"
-#include "Tokens.h"
+#include "tokens.h"
 #include <QDataStream>
 
 class CLexer

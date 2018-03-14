@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "instructions.h"
 
 void CParser::work(CReaderWriter* writer, QVector<SDataToken> dataTokens, QVector<SCodeToken> codeTokens,
 	QVector<QString> dataTable, QString filename)
@@ -24,19 +25,50 @@ void CParser::work(CReaderWriter* writer, QVector<SDataToken> dataTokens, QVecto
 
 QByteArray CParser::writeCodeSection()
 {
+
+	//for (int i = 0; i < m_codeTokens.size(); i++)
+	//{
+	//	qDebug() << "m_codeTokens[i].opcode.instr = " << m_codeTokens[i].opcode.instr;
+	//	qDebug() << "m_codeTokens[i].opcode.arg1Type = " << m_codeTokens[i].opcode.arg1Type;
+	//	qDebug() << "m_codeTokens[i].opcode.arg2Type = " << m_codeTokens[i].opcode.arg2Type;
+	//	qDebug() << "m_codeTokens[i].opcode.arg3Type = " << m_codeTokens[i].opcode.arg3Type;
+	//	qDebug() << "m_codeTokens[i].opcode.argSize = " << m_codeTokens[i].opcode.argSize;
+	//	qDebug() << "m_codeTokens[i].line  = " << m_codeTokens[i].line;
+	//}
+	
+	////////////////////////////
 	QByteArray out;
 	int offset = 0;			//size of codeSection
+	QDataStream ost(&out, QIODevice::WriteOnly);
 
 	QHash<QString, int>::Iterator i;
 	for (int i = 0; i < m_codeTokens.size(); i++)
 	{
-		for (int k = 0; k < sizeof m_codeTokens[i].opcode.opcode - 1; ++k)
-		{
-			out.append(char(0));
-		}
-		out.append(m_codeTokens[i].opcode.opcode);
-		offset += sizeof m_codeTokens[i].opcode.opcode;
+		//for (int k = 0; k < sizeof m_codeTokens[i].opcode.opcode - 1; ++k)
+		//{
+		//	out.append(char(0));
+		//}
+		
+//		out.append(m_codeTokens[i].opcode.instr);
+//		qDebug() << "m_codeTokens[i].opcode.instr = " << m_codeTokens[i].opcode.instr;
+//		out.append(m_codeTokens[i].opcode.opcode);
+//		qDebug() << "m_codeTokens[i].opcode.opcode = " << m_codeTokens[i].opcode.opcode;
+//		qDebug() << "m_codeTokens[i].opcode.opcode = " << QByteArray::number(m_codeTokens[i].opcode.opcode).toHex();
 
+
+		uint16 opco = m_codeTokens[i].opcode.opcode;
+		UOpcode opc;
+		opc.opcode = opco;
+		ost << opco;
+		//qDebug() << "m_codeTokens[i].opcode.instr = " << m_codeTokens[i].opcode.instr;
+		//	qDebug() << "m_codeTokens[i].opcode.arg1Type = " << opc.arg1Type;
+		//	qDebug() << "m_codeTokens[i].opcode.arg2Type = " << opc.arg2Type;
+		//	qDebug() << "m_codeTokens[i].opcode.arg3Type = " << opc.arg3Type;
+		//	qDebug() << "m_codeTokens[i].opcode.argSize = " << opc.argSize;
+
+		offset += sizeof m_codeTokens[i].opcode.opcode;
+		ost << m_codeTokens[i].line;
+		offset += sizeof m_codeTokens[i].line;
 		for (int j = 0; j < m_codeTokens[i].argValue.size(); j++)
 		{
 			if ((j == 0 && m_codeTokens[i].opcode.arg1Type == static_cast<uint16>(EArgumentType::Data)) ||
@@ -48,22 +80,36 @@ QByteArray CParser::writeCodeSection()
 				int indexInSymbolTable = m_nameGrammar[identifierName];
 				for (int k = 0; k < sizeof indexInSymbolTable - 1; ++k)
 				{
-					out.append(char(0));
+					//out.append(char(0));
+					//ost << char(0);
 				}
-				out.append(indexInSymbolTable);
+			//	out.append(indexInSymbolTable);
+				ost << indexInSymbolTable;
 				offset += sizeof indexInSymbolTable;
 			}
 			else
 			{
 				for (int k = 0; k < sizeof m_codeTokens[i].argValue[j] - 1; ++k)
 				{
-					out.append(char(0));
+					//out.append(char(0));
+					//ost << char(0);
 				}
-				out.append(m_codeTokens[i].argValue[j]);
+				//out.append(m_codeTokens[i].argValue[j]);
+				ost << m_codeTokens[i].argValue[j];
 				offset += sizeof m_codeTokens[i].argValue[j];
 			}
+			
 		}
 	}
+
+
+	qDebug() << "writeCodeSection";
+	qDebug() << "out.size() = " << out.size();
+	for (int i = 0; i < out.size(); ++i)
+	{
+		qDebug() << i << " = " << static_cast<int>(out[i]);
+	}
+
 	return out;
 }
 void CParser::testCodeSection(QByteArray& codeSection)

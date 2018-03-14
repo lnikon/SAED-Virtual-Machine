@@ -25,11 +25,15 @@ public:
 	void write(QString filename);
 
 	QByteArray read(QString sFileExe);
+
+
+public:
+	QByteArray getDataSection();
 public:
 	SHeader readHeader(QString filename);
-	QVector<SDataToken> readDataTableSection(SHeader h, QString filename);
-	QVector<SDataToken> readDataSection(SHeader h, QVector<SDataToken>, QString filename);
-	void readCodeSection(SHeader h, QString filename);
+	QByteArray readDataTableSection(SHeader h, QString filename);
+	QByteArray readDataSection(SHeader h, QString filename);
+	QByteArray readCodeSection(SHeader h, QString filename);
 private:
 	void createHeader();
 	//	QByteArray writeHeader(QString signature, int32 version);
@@ -50,6 +54,9 @@ private:
 	std::string m_sSignature;
 	SHeader m_SHeader;
 	QByteArray m_buffer;
+
+private:
+	SHeader m_readSHeader;
 };
 
 

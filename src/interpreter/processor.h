@@ -5,21 +5,38 @@
 #include "i_o_manager.h"
 #include "../compiler/instructions.h"
 
+#include <memory>
+
 class CProcessor
 {
-
 	static constexpr uint32 cui32AddressRegisterPoolSize = 8;
 	static constexpr uint32 cui32GeneralPurposeRegistersSize = 32;
-	
-public:
 
+public:
+	CProcessor() = default;
+
+	CProcessor(CProcessor const&) = delete;
+	CProcessor(CProcessor &&) = delete;
+	void operator=(CProcessor const&) = delete;
+	void operator=(CProcessor &&) = delete;
+
+public:
 	bool IsRunning() {}
 	void Run() {}
 	void Stop() {}
-	void Init(CMemory* memory, int PC, CIOManager* IOMan) {}
+
+private:
+	bool m_bIsRunning = false;
 
 public:
+	void fetch();
+	void decode();
+	void execute() {}
 
+public:
+	void Init(CMemoryPtr memory, int PC);
+
+public:
 	class CFlags
 	{
 	public:
@@ -73,10 +90,19 @@ public:
 	};
 
 private:
+	UOpcode m_nIR;
 	uint32 m_nPC;
 
+	uint32 m_nSP;
+	uint32 m_nSF;
+
+	CMemoryPtr m_pMemory;
+
 	uint32 m_aui32AR[cui32AddressRegisterPoolSize];
-	uint8 maui8GPR[cui32GeneralPurposeRegistersSize];
+	uint8 m_aui8GPR[cui32GeneralPurposeRegistersSize];
+
 };
+
+using CProcessorPtr = std::shared_ptr<CProcessor>;
 
 #endif // !PROCESSOR_H

@@ -7,7 +7,8 @@
 #include <QFileInfo>
 
 #include "compiler.h"
-#include "../interpreter/interpreter.h"
+
+#include "disassembler.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +17,8 @@ int main(int argc, char *argv[])
 	CCompiler compiler;
 	compiler.work("test.asm", "test.txt");
 
-
+	CDisAssembler disassm;
+	disassm.work("test.txt", "a.txt");
 
 	exit(1);
 	return aaa.exec();

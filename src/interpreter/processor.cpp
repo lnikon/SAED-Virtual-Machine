@@ -1,5 +1,6 @@
 #include "processor.h"
 
+#pragma region flag_impl
 CProcessor::CFlags::CFlags()
 	: m_ui16Value(0)
 {
@@ -153,4 +154,22 @@ bool CProcessor::CFlags::IsParity() const
 bool CProcessor::CFlags::IsNotParity() const
 {
 	return (getParity() == false);
+}
+
+#pragma endregion
+
+
+void CProcessor::fetch()
+{
+	m_nIR = static_cast<uint16>(m_pMemory->operator[](m_nPC));
+}
+
+void CProcessor::decode()
+{
+	
+}
+
+void CProcessor::Init(CMemoryPtr memory, int PC)
+{
+	m_pMemory = memory;
 }

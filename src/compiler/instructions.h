@@ -46,7 +46,10 @@ union UOpcode
 		opcode = val;
 		return *this;
 	}
-
+	operator uint16()
+	{
+		return opcode;
+	}
 	//UOpcode(EInstruction op, EArgumentType at1, EArgumentType at2, EArgumentType at3, uint16 as) : opcode(op), arg1Type(at1), arg2Type(at2), arg3Type(at3), argSize(as)
 	//{
 	//}
@@ -54,12 +57,14 @@ union UOpcode
 	uint16 opcode;
 	struct
 	{
-		uint16 instr : 8;
-		
+		//uint16 instr : 8;
+
 		uint16 arg1Type : 2;
 		uint16 arg2Type : 2;
 		uint16 arg3Type : 2;
-		uint16 argSize : 2;
+		uint16 argSize : 2;					//word,dword....s
+		
+		uint16 instr : 8;
 	};
 };
 
@@ -166,10 +171,13 @@ struct SInstructionParameters
 		instrCode(i), argumentCount(a), argumentType(t)
 	{
 	}
-
 	EInstruction instrCode;
 	int32 argumentCount;
 	EType argumentType;
+	friend bool operator==(const SInstructionParameters& other, const SInstructionParameters& other1)
+	{
+		return (other.argumentCount == other1.argumentCount) && (other.argumentType == other1.argumentType) && (other.instrCode == other1.instrCode);
+	}
 };
 
 const QHash<uint16, int> HInstCount =
