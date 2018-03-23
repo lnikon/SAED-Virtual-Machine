@@ -28,7 +28,7 @@ public:
 private:
     CProcessorPtr m_pProcessor;
     CMemoryPtr m_pMemory;
-    //CLoader* m_Loader;
+    CLoader* m_Loader;
 
 	//is this ok
     CIOManager& m_pIOMan;
@@ -36,4 +36,3 @@ private:
 };
 
 #endif // INTERPRETER_H
-

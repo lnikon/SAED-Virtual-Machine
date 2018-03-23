@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#include "../compiler/readerwriter.h"
 
 CInterpreter::CInterpreter() : m_pIOMan(*new CIOManager)
 {
@@ -13,11 +14,11 @@ void CInterpreter::Init(QTextStream &input)
 	Reset();
 
 	m_pMemory = std::make_shared<CMemory>();
+	m_Loader = new CLoader;
 
-	//m_Loader = new CLoader;
-	//m_Loader->load(input, m_Memory);
+	m_Loader->load(m_pMemory, *new CReaderWriter, 10);
 
-	m_pProcessor = std::make_unique<CProcessor>();
+	m_pProcessor = std::make_shared<CProcessor>();
 	m_pProcessor->Init(m_pMemory, 1);
 
 }
@@ -34,10 +35,10 @@ bool CInterpreter::isValid()
 
 void CInterpreter::Run()
 {
-	/*if (!m_CPU->isRunning())
+	if (!m_pProcessor->IsRunning())
 	{
-		m_CPU->Run();
-	}*/
+		m_pProcessor->Run();
+	}
 }
 
 void CInterpreter::Stop()

@@ -35,6 +35,8 @@ public:
 
 	uint32 GetMemorySize();
 
+	void resize(uint32); // <--
+
 public:
 	template <typename T>
 	T& at(uint32 ind);
@@ -48,7 +50,6 @@ public:
 private:
 	uint32 m_nStackSize = DefaultStackSize;
 	QVector<uint8> m_aMemory;
-
 };
 
 using CMemoryPtr = std::shared_ptr<CMemory>;

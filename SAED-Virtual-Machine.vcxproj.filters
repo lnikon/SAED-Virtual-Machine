@@ -39,6 +39,11 @@
     <Filter Include="i/o\headers">
       <UniqueIdentifier>{613f11c8-88ba-4a07-b000-a253ddf05c09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\compiler\compiler.h">
@@ -89,6 +94,12 @@
     <ClInclude Include="src\compiler\disparser.h">
       <Filter>compiler\headers</Filter>
     </ClInclude>
+    <ClInclude Include="executor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpreter\executor.h">
+      <Filter>interpreter\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\compiler\compiler.cpp">
@@ -126,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="src\compiler\disparser.cpp">
       <Filter>compiler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interpreter\executor.cpp">
+      <Filter>interpreter\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

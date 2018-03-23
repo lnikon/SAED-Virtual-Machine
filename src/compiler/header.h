@@ -15,9 +15,9 @@ enum class ESectionType
 const QMap<ESectionType, QString> MSections
 {
 	{ ESectionType::Data, "DataSection", },
-{ ESectionType::Code, "CodeSection", },
-{ ESectionType::DataTable, "DataTableSection", },
-{ ESectionType::CodeTable, "CodeTableSection", }
+	{ ESectionType::Code, "CodeSection", },
+	{ ESectionType::DataTable, "DataTableSection", },
+	{ ESectionType::CodeTable, "CodeTableSection", }
 };
 
 

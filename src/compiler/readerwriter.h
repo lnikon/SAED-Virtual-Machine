@@ -20,20 +20,31 @@ class CReaderWriter
 {
 public:
 	CReaderWriter();
+	CReaderWriter(QString filePath); // <--
+
+	void setFileName(QString newFileName); // <--
+	void setHeader(SHeader newHeader);
 
 	void addSection(QByteArray buf, ESectionType sectionType);
 	void write(QString filename);
+	void write(); // <--
 
 	QByteArray read(QString sFileExe);
-
+	QByteArray read(); // <-- 
 
 public:
 	QByteArray getDataSection();
 public:
 	SHeader readHeader(QString filename);
+	SHeader readHeader(); // <--
+
 	QByteArray readDataTableSection(SHeader h, QString filename);
+
 	QByteArray readDataSection(SHeader h, QString filename);
+	QByteArray readDataSection(SHeader h); // <-- 
 	QByteArray readCodeSection(SHeader h, QString filename);
+	QByteArray readCodeSection(SHeader h); // <--
+
 private:
 	void createHeader();
 	//	QByteArray writeHeader(QString signature, int32 version);
@@ -54,12 +65,10 @@ private:
 	std::string m_sSignature;
 	SHeader m_SHeader;
 	QByteArray m_buffer;
-
+public: // Arm
+	QString m_filename; // <--
 private:
 	SHeader m_readSHeader;
 };
-
-
-
 
 #endif

@@ -1,4 +1,62 @@
 #include "processor.h"
+#include "../compiler/instructions.h"
+#include "executor.h"
+
+const std::map<EInstruction, CProcessor::FnCommand> CProcessor::s_mapCommands
+{
+	{ EInstruction::Invalid, &CProcessor::IExecutor::Invalid },
+	{ EInstruction::Nop, &CProcessor::IExecutor::Nop },
+	{ EInstruction::Break, &CProcessor::IExecutor::Break },
+	{ EInstruction::Int, &CProcessor::IExecutor::Int },
+	//{ EInstruction::Jump, &CProcessor::IExecutor::Jump },
+	//{ EInstruction::Call, &CProcessor::IExecutor::Call },
+	//{ EInstruction::Ret, &CProcessor::IExecutor::Ret },
+	//{ EInstruction::Iret, &CProcessor::IExecutor::Iret },
+	//{ EInstruction::Sti, &CProcessor::IExecutor::Sti },
+	//{ EInstruction::Cli, &CProcessor::IExecutor::Cli },
+	//{ EInstruction::Stc, &CProcessor::IExecutor::Stc },
+	//{ EInstruction::Clc, &CProcessor::IExecutor::Clc },
+	//{ EInstruction::Assign, &CProcessor::IExecutor::Assign },
+	//{ EInstruction::Move, &CProcessor::IExecutor::Move },
+	//{ EInstruction::Swap, &CProcessor::IExecutor::Swap },
+	//{ EInstruction::Add, &CProcessor::IExecutor::Add },
+	//{ EInstruction::Adc, &CProcessor::IExecutor::Adc },
+	//{ EInstruction::Sub, &CProcessor::IExecutor::Sub },
+	//{ EInstruction::Sbb, &CProcessor::IExecutor::Sbb },
+	//{ EInstruction::Mul, &CProcessor::IExecutor::Mul },
+	//{ EInstruction::Imul, &CProcessor::IExecutor::Imul },
+	//{ EInstruction::Div, &CProcessor::IExecutor::Div },
+	//{ EInstruction::Idiv, &CProcessor::IExecutor::Idiv },
+	//{ EInstruction::Inc, &CProcessor::IExecutor::Inc },
+	//{ EInstruction::Dec, &CProcessor::IExecutor::Dec },
+	//{ EInstruction::Neg, &CProcessor::IExecutor::Neg },
+	//{ EInstruction::Cmp, &CProcessor::IExecutor::Cmp },
+	//{ EInstruction::And, &CProcessor::IExecutor::And },
+	//{ EInstruction::Or, &CProcessor::IExecutor::Or },
+	//{ EInstruction::Xor, &CProcessor::IExecutor::Xor },
+	//{ EInstruction::Nand, &CProcessor::IExecutor::Nand },
+	//{ EInstruction::Nor, &CProcessor::IExecutor::Nor },
+	//{ EInstruction::Not, &CProcessor::IExecutor::Not },
+	//{ EInstruction::Shr, &CProcessor::IExecutor::Shr },
+	//{ EInstruction::Sar, &CProcessor::IExecutor::Sar },
+	//{ EInstruction::Shl, &CProcessor::IExecutor::Shl },
+	//{ EInstruction::Sal, &CProcessor::IExecutor::Sal },
+	//{ EInstruction::Ror, &CProcessor::IExecutor::Ror },
+	//{ EInstruction::Rcr, &CProcessor::IExecutor::Rcr },
+	//{ EInstruction::Rol, &CProcessor::IExecutor::Rol },
+	//{ EInstruction::Rcl, &CProcessor::IExecutor::Rcl },
+	//{ EInstruction::Test, &CProcessor::IExecutor::Test },
+	//{ EInstruction::Load, &CProcessor::IExecutor::Load },
+	//{ EInstruction::Store, &CProcessor::IExecutor::Store },
+	//{ EInstruction::Push, &CProcessor::IExecutor::Push },
+	//{ EInstruction::Pop, &CProcessor::IExecutor::Pop },
+	//{ EInstruction::Pushf, &CProcessor::IExecutor::Pushf },
+	//{ EInstruction::Popf, &CProcessor::IExecutor::Popf },
+	//{ EInstruction::Pushsf, &CProcessor::IExecutor::Pushsf },
+	//{ EInstruction::Popsf, &CProcessor::IExecutor::Popsf },
+	//{ EInstruction::In, &CProcessor::IExecutor::In },
+	//{ EInstruction::Out, &CProcessor::IExecutor::Out }
+};
 
 #pragma region flag_impl
 CProcessor::CFlags::CFlags()
@@ -158,18 +216,45 @@ bool CProcessor::CFlags::IsNotParity() const
 
 #pragma endregion
 
-
-void CProcessor::fetch()
+CProcessor::t_commandType CProcessor::fetch()
 {
-	m_nIR = static_cast<uint16>(m_pMemory->operator[](m_nPC));
+	return static_cast<uint16>(m_pMemory->operator[](m_nPC));
 }
 
-void CProcessor::decode()
+CProcessor::SCommand CProcessor::decode(t_commandType& commandType)
 {
-	
+	auto it = s_mapCommands.find(static_cast<EInstruction>(commandType.instr));
+	if (it != s_mapCommands.end())
+	{
+		CProcessor::FnCommand fnCommand = it->second;
+		SCommand as;
+		IExecutor* executor = new CExecutor;
+		(executor->*fnCommand)(as);
+	}
+	return CProcessor::SCommand();
+}
+
+void CProcessor::execute(SCommand)
+{
+	// Todo
 }
 
 void CProcessor::Init(CMemoryPtr memory, int PC)
 {
 	m_pMemory = memory;
+}
+
+bool CProcessor::IsRunning()
+{
+	return m_bIsRunning;
+}
+
+void CProcessor::Run()
+{
+	while (m_bControlFlag)
+	{
+		m_nIR = fetch();
+		m_oCurrentCommandContext = decode(m_nIR);
+		execute(m_oCurrentCommandContext);
+	}
 }

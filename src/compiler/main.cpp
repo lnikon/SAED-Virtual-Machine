@@ -7,7 +7,7 @@
 #include <QFileInfo>
 
 #include "compiler.h"
-
+#include "../interpreter/processor.h"
 #include "disassembler.h"
 
 int main(int argc, char *argv[])

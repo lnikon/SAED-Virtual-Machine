@@ -3,7 +3,6 @@
 
 #include <QString>
 
-
 #include "disparser.h"
 #include "codegenerator.h"
 
@@ -19,4 +18,3 @@ private:
 };
 
 #endif
-

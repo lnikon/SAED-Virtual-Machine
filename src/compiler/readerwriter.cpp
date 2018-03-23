@@ -97,7 +97,7 @@ SHeader CReaderWriter::readHeader(QString filename)
 	QByteArray output = file.readAll();
 	QDataStream in(&file);
 
-//	SHeader m_readSHeader;
+	//	SHeader m_readSHeader;
 
 	char ch;
 	int i = 1;
@@ -144,7 +144,7 @@ void CReaderWriter::testTheExeFile(QString filename)
 
 	/*for (int pos = 0; pos < output.size(); ++pos)
 	{
-		qDebug() << pos << static_cast<int>(output[pos]);
+	qDebug() << pos << static_cast<int>(output[pos]);
 	}*/
 
 
@@ -193,7 +193,7 @@ QByteArray CReaderWriter::readDataTableSection(SHeader h, QString filename)
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	QByteArray output = file.readAll();
 	int secSize;
-//	qDebug() << "h.recordTable.size()  =" << h.recordTable.size();
+	//	qDebug() << "h.recordTable.size()  =" << h.recordTable.size();
 	secSize = h.recordTable[static_cast<int>(ESectionType::DataTable)].size;
 	QByteArray out;
 	int size = m_headerSize;
@@ -224,8 +224,8 @@ QByteArray CReaderWriter::readDataSection(SHeader h, QString filename)
 		out[j] = output[i];
 		++j;
 	}
-	return out;
 	file.close();
+	return out;
 }
 QByteArray CReaderWriter::readCodeSection(SHeader h, QString filename)
 {
@@ -258,7 +258,6 @@ QByteArray CReaderWriter::readCodeSection(SHeader h, QString filename)
 	//	qDebug() << "out[" << i << "] = " << static_cast<int>(out[i]);
 	//}
 
-	return out;
 
 
 	//QVector <SCodeToken> VCT;
@@ -293,6 +292,7 @@ QByteArray CReaderWriter::readCodeSection(SHeader h, QString filename)
 	//}
 	file.close();
 	qDebug() << "\n\nend of readCodeSection\n\n";
+	return out;
 }
 QByteArray CReaderWriter::read(QString sFileExe)
 {
@@ -307,4 +307,46 @@ QByteArray CReaderWriter::read(QString sFileExe)
 	return output;
 }
 
+// ==========================================================
 
+CReaderWriter::CReaderWriter(QString filePath) :
+	m_filename(filePath), m_nVersion(1), m_sSignature("SAED/VirtualMachine/ExeFile"), m_headerSize(128)
+{
+}
+
+void CReaderWriter::setFileName(QString newFileName)
+{
+	m_filename = newFileName;
+}
+
+void CReaderWriter::setHeader(SHeader newHeader)
+{
+	m_SHeader = newHeader;
+}
+
+void CReaderWriter::write()
+{
+	if (m_filename.size() == 0)
+		return;
+	write(m_filename);
+}
+
+QByteArray CReaderWriter::read()
+{
+	if (m_filename.size() == 0)
+		return QByteArray();
+	return read(m_filename);
+}
+
+SHeader CReaderWriter::readHeader()
+{
+	return readHeader(m_filename);
+}
+
+QByteArray CReaderWriter::readDataSection(SHeader h) {
+	return readDataSection(h, m_filename);
+}
+
+QByteArray CReaderWriter::readCodeSection(SHeader h) {
+	return readCodeSection(h, m_filename);
+}

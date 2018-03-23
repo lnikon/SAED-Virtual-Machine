@@ -1,6 +1,8 @@
 #ifndef TOKENS_H
 #define TOKENS_H
+
 #include "instructions.h"
+
 #include <QVarLengthArray>
 
 struct SDataToken
@@ -22,6 +24,7 @@ struct SDataToken
 
 struct SCodeToken
 {
+	
 	SCodeToken() : line(1)
 	{
 	}

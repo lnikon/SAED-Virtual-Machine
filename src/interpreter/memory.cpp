@@ -32,3 +32,10 @@ const uint8& CMemory::operator[](uint32 ind) const
 {
 	return m_aMemory[ind];
 }
+
+// ================================
+
+void CMemory::resize(uint32 newSize)
+{
+	m_aMemory.resize(newSize);
+}
