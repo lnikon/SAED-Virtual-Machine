@@ -1,7 +1,7 @@
 #include "loader.h"
 #include <QByteArray.h>
 
-CLoader::SInfo CLoader::load(CMemoryPtr memory, CReaderWriter& reader, uint32 stackSize = 128)
+CLoader::SInfo CLoader::load(CMemoryPtr memory, CReaderWriter& reader, uint32 stackSize)
 {
 	SHeader header = reader.readHeader();
 	QByteArray code = reader.readCodeSection(header);

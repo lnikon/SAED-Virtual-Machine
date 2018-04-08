@@ -29,7 +29,7 @@ struct SCodeToken
 	{
 	}
 
-	explicit SCodeToken(uint32 l) : line(l)
+	explicit SCodeToken(uint32 l) : line(l), opcode(0)
 	{
 	}
 

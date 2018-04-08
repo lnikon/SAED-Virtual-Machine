@@ -13,7 +13,7 @@ public:
     CInterpreter();
     ~CInterpreter();
 
-    void Init (QTextStream &input);
+    void Init(QString const& inputFileName);
 
     void Run();
     void Stop();
@@ -29,9 +29,7 @@ private:
     CProcessorPtr m_pProcessor;
     CMemoryPtr m_pMemory;
     CLoader* m_Loader;
-
-	//is this ok
-    CIOManager& m_pIOMan;
+    CIOManager m_IOMan;
 
 };
 

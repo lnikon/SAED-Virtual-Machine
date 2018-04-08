@@ -2,60 +2,65 @@
 #include "../compiler/instructions.h"
 #include "executor.h"
 
-const std::map<EInstruction, CProcessor::FnCommand> CProcessor::s_mapCommands
+#include <utility>
+#include <QHash>
+#include <intrin.h>
+
+const std::unordered_map<EInstruction, CProcessor::SCommandDefinition> CProcessor::s_mapCommands
 {
-	{ EInstruction::Invalid, &CProcessor::IExecutor::Invalid },
-	{ EInstruction::Nop, &CProcessor::IExecutor::Nop },
-	{ EInstruction::Break, &CProcessor::IExecutor::Break },
-	{ EInstruction::Int, &CProcessor::IExecutor::Int },
-	//{ EInstruction::Jump, &CProcessor::IExecutor::Jump },
-	//{ EInstruction::Call, &CProcessor::IExecutor::Call },
-	//{ EInstruction::Ret, &CProcessor::IExecutor::Ret },
-	//{ EInstruction::Iret, &CProcessor::IExecutor::Iret },
-	//{ EInstruction::Sti, &CProcessor::IExecutor::Sti },
-	//{ EInstruction::Cli, &CProcessor::IExecutor::Cli },
-	//{ EInstruction::Stc, &CProcessor::IExecutor::Stc },
-	//{ EInstruction::Clc, &CProcessor::IExecutor::Clc },
-	//{ EInstruction::Assign, &CProcessor::IExecutor::Assign },
-	//{ EInstruction::Move, &CProcessor::IExecutor::Move },
-	//{ EInstruction::Swap, &CProcessor::IExecutor::Swap },
-	//{ EInstruction::Add, &CProcessor::IExecutor::Add },
-	//{ EInstruction::Adc, &CProcessor::IExecutor::Adc },
-	//{ EInstruction::Sub, &CProcessor::IExecutor::Sub },
-	//{ EInstruction::Sbb, &CProcessor::IExecutor::Sbb },
-	//{ EInstruction::Mul, &CProcessor::IExecutor::Mul },
-	//{ EInstruction::Imul, &CProcessor::IExecutor::Imul },
-	//{ EInstruction::Div, &CProcessor::IExecutor::Div },
-	//{ EInstruction::Idiv, &CProcessor::IExecutor::Idiv },
-	//{ EInstruction::Inc, &CProcessor::IExecutor::Inc },
-	//{ EInstruction::Dec, &CProcessor::IExecutor::Dec },
-	//{ EInstruction::Neg, &CProcessor::IExecutor::Neg },
-	//{ EInstruction::Cmp, &CProcessor::IExecutor::Cmp },
-	//{ EInstruction::And, &CProcessor::IExecutor::And },
-	//{ EInstruction::Or, &CProcessor::IExecutor::Or },
-	//{ EInstruction::Xor, &CProcessor::IExecutor::Xor },
-	//{ EInstruction::Nand, &CProcessor::IExecutor::Nand },
-	//{ EInstruction::Nor, &CProcessor::IExecutor::Nor },
-	//{ EInstruction::Not, &CProcessor::IExecutor::Not },
-	//{ EInstruction::Shr, &CProcessor::IExecutor::Shr },
-	//{ EInstruction::Sar, &CProcessor::IExecutor::Sar },
-	//{ EInstruction::Shl, &CProcessor::IExecutor::Shl },
-	//{ EInstruction::Sal, &CProcessor::IExecutor::Sal },
-	//{ EInstruction::Ror, &CProcessor::IExecutor::Ror },
-	//{ EInstruction::Rcr, &CProcessor::IExecutor::Rcr },
-	//{ EInstruction::Rol, &CProcessor::IExecutor::Rol },
-	//{ EInstruction::Rcl, &CProcessor::IExecutor::Rcl },
-	//{ EInstruction::Test, &CProcessor::IExecutor::Test },
-	//{ EInstruction::Load, &CProcessor::IExecutor::Load },
-	//{ EInstruction::Store, &CProcessor::IExecutor::Store },
-	//{ EInstruction::Push, &CProcessor::IExecutor::Push },
-	//{ EInstruction::Pop, &CProcessor::IExecutor::Pop },
-	//{ EInstruction::Pushf, &CProcessor::IExecutor::Pushf },
-	//{ EInstruction::Popf, &CProcessor::IExecutor::Popf },
-	//{ EInstruction::Pushsf, &CProcessor::IExecutor::Pushsf },
-	//{ EInstruction::Popsf, &CProcessor::IExecutor::Popsf },
-	//{ EInstruction::In, &CProcessor::IExecutor::In },
-	//{ EInstruction::Out, &CProcessor::IExecutor::Out }
+	{ EInstruction::Invalid, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Invalid} },
+	{ EInstruction::Nop, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Nop} },
+	{ EInstruction::End, CProcessor::SCommandDefinition{&CProcessor::IExecutor::End} },
+	{ EInstruction::Break, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Break} },
+	{ EInstruction::Int, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Int} },
+	{ EInstruction::Jump, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Jump} },
+	{ EInstruction::Call, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Call} },
+	{ EInstruction::Ret, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Ret} },
+	{ EInstruction::Iret, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Iret} },
+	{ EInstruction::Sti, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Sti} },
+	{ EInstruction::Cli, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Cli} },
+	{ EInstruction::Stc, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Stc} },
+	{ EInstruction::Clc, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Clc} },
+	{ EInstruction::Assign, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Assign} },
+	{ EInstruction::Move, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Move} },
+	{ EInstruction::Swap, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Swap} },
+	{ EInstruction::Add, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Add} },
+	{ EInstruction::Adc, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Adc} },
+	{ EInstruction::Sub, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Sub} },
+	{ EInstruction::Sbb, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Sbb} },
+	{ EInstruction::Mul, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Mul} },
+	{ EInstruction::Imul, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Imul} },
+	{ EInstruction::Div, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Div} },
+	{ EInstruction::Idiv, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Idiv} },
+	{ EInstruction::Inc, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Inc} },
+	{ EInstruction::Dec, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Dec} },
+	{ EInstruction::Neg, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Neg} },
+	{ EInstruction::Cmp, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Cmp} },
+	{ EInstruction::And, CProcessor::SCommandDefinition{&CProcessor::IExecutor::And} },
+	{ EInstruction::Or, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Or} },
+	{ EInstruction::Xor, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Xor} },
+	{ EInstruction::Nand, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Nand} },
+	{ EInstruction::Nor, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Nor} },
+	{ EInstruction::Not, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Not} },
+	{ EInstruction::Shr, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Shr} },
+	{ EInstruction::Sar, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Sar} },
+	{ EInstruction::Shl, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Shl} },
+	{ EInstruction::Sal, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Sal} },
+	{ EInstruction::Ror, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Ror} },
+	{ EInstruction::Rcr, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Rcr} },
+	{ EInstruction::Rol, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Rol} },
+	{ EInstruction::Rcl, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Rcl} },
+	{ EInstruction::Test, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Test} },
+	{ EInstruction::Load, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Load} },
+	{ EInstruction::Store, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Store} },
+	{ EInstruction::Push, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Push} },
+	{ EInstruction::Pop, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Pop} },
+	{ EInstruction::Pushf, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Pushf} },
+	{ EInstruction::Popf, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Popf} },
+	{ EInstruction::Pushsf, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Pushsf} },
+	{ EInstruction::Popsf, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Popsf} },
+	{ EInstruction::In, CProcessor::SCommandDefinition{&CProcessor::IExecutor::In} },
+	{ EInstruction::Out, CProcessor::SCommandDefinition{&CProcessor::IExecutor::Out} }
 };
 
 #pragma region flag_impl
@@ -218,30 +223,45 @@ bool CProcessor::CFlags::IsNotParity() const
 
 CProcessor::t_commandType CProcessor::fetch()
 {
-	return static_cast<uint16>(m_pMemory->operator[](m_nPC));
+	return _byteswap_ushort(m_pMemory->at<uint16>(m_oState.m_nPC));
 }
 
 CProcessor::SCommand CProcessor::decode(t_commandType& commandType)
 {
 	auto it = s_mapCommands.find(static_cast<EInstruction>(commandType.instr));
+	SCommand as;
 	if (it != s_mapCommands.end())
 	{
-		CProcessor::FnCommand fnCommand = it->second;
-		SCommand as;
-		IExecutor* executor = new CExecutor;
-		(executor->*fnCommand)(as);
+		std::cout << int(it->first) << std::endl;
+		CProcessor::FnCommand fnCommand = it->second.pFnCommand;
+		as.command = fnCommand;
+		as.op = commandType;
+		if (as.op.arg1Type != 0) // 0 for EArgumentType::None
+		{
+			as.argValue.push_back(static_cast<uint32>(_byteswap_ulong(m_pMemory->at<uint32>(m_oState.m_nPC +=  6))));
+		}
+		if (as.op.arg2Type != 0)
+		{
+			as.argValue.push_back(static_cast<uint32>(_byteswap_ulong(m_pMemory->at<uint32>(m_oState.m_nPC += 4))));
+		}
+		if (as.op.arg3Type != 0)
+		{
+			as.argValue.push_back(static_cast<uint32>(_byteswap_ulong(m_pMemory->at<uint32>(m_oState.m_nPC += 4))));
+		}
 	}
-	return CProcessor::SCommand();
+	return as;
 }
 
-void CProcessor::execute(SCommand)
+void CProcessor::execute(SCommand command)
 {
-	// Todo
+	IExecutor* executor = new CExecutor;
+	(executor->*command.command)(m_oState, command);
 }
 
 void CProcessor::Init(CMemoryPtr memory, int PC)
 {
 	m_pMemory = memory;
+	m_oState.m_nPC = PC;
 }
 
 bool CProcessor::IsRunning()
@@ -251,10 +271,19 @@ bool CProcessor::IsRunning()
 
 void CProcessor::Run()
 {
-	while (m_bControlFlag)
+	while (m_oState.m_bControlFlag)
 	{
-		m_nIR = fetch();
-		m_oCurrentCommandContext = decode(m_nIR);
+		if (m_oState.m_fFlags.getTrap())
+		{
+			//m_oDebugger->run(m_oState);
+		}
+		m_oState.m_nIR = fetch();
+		m_oCurrentCommandContext = decode(m_oState.m_nIR);
+		m_oState.m_nPC += 4;
 		execute(m_oCurrentCommandContext);
 	}
+}
+
+CProcessor::SCommandDefinition::SCommandDefinition(FnCommand fn) : pFnCommand(fn)
+{
 }

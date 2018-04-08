@@ -1,7 +1,7 @@
 #include "interpreter.h"
 #include "../compiler/readerwriter.h"
 
-CInterpreter::CInterpreter() : m_pIOMan(*new CIOManager)
+CInterpreter::CInterpreter()
 {
 }
 
@@ -9,24 +9,26 @@ CInterpreter::~CInterpreter()
 {
 }
 
-void CInterpreter::Init(QTextStream &input)
+void CInterpreter::Init(QString const& inputFileName)
 {
 	Reset();
 
 	m_pMemory = std::make_shared<CMemory>();
 	m_Loader = new CLoader;
 
-	m_Loader->load(m_pMemory, *new CReaderWriter, 10);
+	CReaderWriter RW(inputFileName);
+
+	CLoader::SInfo info = m_Loader->load(m_pMemory, RW);
 
 	m_pProcessor = std::make_shared<CProcessor>();
-	m_pProcessor->Init(m_pMemory, 1);
+	m_pProcessor->Init(m_pMemory, info.codeIndex);
 
 }
 
 bool CInterpreter::isValid()
 {
-	if (m_pMemory != nullptr /*&& m_Loader != nullptr*/
-		&& m_pProcessor != nullptr && &m_pIOMan != nullptr)
+	if (m_pMemory != nullptr && m_Loader != nullptr
+		&& m_pProcessor != nullptr)
 	{
 		return true;
 	}
@@ -50,7 +52,7 @@ void CInterpreter::Reset()
 {
 	m_pProcessor = nullptr;
 	m_pMemory = nullptr;
-	//m_Loader = nullptr;
+	m_Loader = nullptr;
 	//m_IOMan = nullptr;
 }
 

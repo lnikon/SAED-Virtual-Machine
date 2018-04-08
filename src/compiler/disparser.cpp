@@ -180,12 +180,12 @@ void CDisParser::readCodeSection(QByteArray buf)
 		in >> sct.line;
 		pos += 4;
 
-//		qDebug() << "opcode = " << opcode;
-		//qDebug() << "sct.opcode.instr = " << sct.opcode.instr;
-		//qDebug() << "sct.opcode.arg1Type = " << sct.opcode.arg1Type;
-		//qDebug() << "sct.opcode.arg2Type = " << sct.opcode.arg2Type;
-		//qDebug() << "sct.opcode.arg3Type = " << sct.opcode.arg3Type;
-		//qDebug() << "sct.opcode.argSize = " << sct.opcode.argSize; 
+		qDebug() << "opcode = " << opcode;
+		qDebug() << "sct.opcode.instr = " << sct.opcode.instr;
+		qDebug() << "sct.opcode.arg1Type = " << sct.opcode.arg1Type;
+		qDebug() << "sct.opcode.arg2Type = " << sct.opcode.arg2Type;
+		qDebug() << "sct.opcode.arg3Type = " << sct.opcode.arg3Type;
+		qDebug() << "sct.opcode.argSize = " << sct.opcode.argSize; 
 
 		uint16 opc16 = sct.opcode.instr;
 		int count = HInstCount[opc16];

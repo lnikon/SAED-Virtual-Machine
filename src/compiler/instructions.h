@@ -61,7 +61,25 @@ union UOpcode
 	//{
 	//}
 
-	uint16 opcode;
+	uint32 getArgCout()
+	{
+		uint32 count = 0;
+		if (arg1Type)
+		{
+			++count;
+		}
+		if (arg2Type)
+		{
+			++count;
+		}
+		if (arg3Type)
+		{
+			++count;
+		}
+		return count;
+	}
+
+	uint16 opcode = 0;
 	struct
 	{
 		//uint16 instr : 8;
@@ -90,6 +108,7 @@ enum class EInstruction
 {
 	Invalid,
 	Nop = 1,
+	End,
 	Break,
 	Int,
 	Jump,
@@ -199,6 +218,7 @@ const QHash<QString, SInstructionParameters> inst =
 {
 	{ "invalid", SInstructionParameters(EInstruction::Invalid, 0, EType::Dword) },
 	{ "nop", SInstructionParameters(EInstruction::Nop, 0, EType::Dword) },
+	{ "end", SInstructionParameters(EInstruction::End, 0, EType::Dword) },
 	{ "break", SInstructionParameters(EInstruction::Break, 1, EType::Dword) },
 	{ "int", SInstructionParameters(EInstruction::Int, 1, EType::Dword) },
 	{ "jump", SInstructionParameters(EInstruction::Jump, 1, EType::Dword) },

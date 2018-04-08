@@ -23,7 +23,7 @@ public:
 		uint32 stackSize;
 	};
 public:
-	SInfo load(CMemoryPtr memory, CReaderWriter& reader, uint32 stackSize);
+	SInfo load(CMemoryPtr memory, CReaderWriter& reader, uint32 stackSize = 128);
 };
 
 #endif // LOADER_H
