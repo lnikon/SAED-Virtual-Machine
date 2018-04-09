@@ -172,7 +172,7 @@ void CDisParser::readCodeSection(QByteArray buf)
 	for (int pos = 0; pos < secSize;)
 	{
 		SCodeToken sct;
-		uint16 opcode;
+		UOpcode opcode;
 		in >> opcode;
 		pos += 2;
 		sct.opcode.opcode = opcode;
@@ -187,16 +187,16 @@ void CDisParser::readCodeSection(QByteArray buf)
 		qDebug() << "sct.opcode.arg3Type = " << sct.opcode.arg3Type;
 		qDebug() << "sct.opcode.argSize = " << sct.opcode.argSize; 
 
-		uint16 opc16 = sct.opcode.instr;
-		int count = HInstCount[opc16];
-//		qDebug() << "count = " << count;
+		//UOpcode opc = sct.opcode;
+		int count = opcode.getArgCout();
+		qDebug() << "count = " << count;
 		for (int i = 0; i < count; ++i)
 		{
 			uint32 arg;
 			in >> arg;
 			pos += 4;
 			sct.argValue.append(arg);
-//			qDebug() << "arg = " << arg;
+			qDebug() << "arg = " << arg;
 		}
 
 		//	uint8 l;

@@ -1,6 +1,7 @@
 #include "processor.h"
 #include "../compiler/instructions.h"
 #include "executor.h"
+#include "../debugger/debugger.h"
 
 #include <utility>
 #include <QHash>
@@ -236,9 +237,10 @@ CProcessor::SCommand CProcessor::decode(t_commandType& commandType)
 		CProcessor::FnCommand fnCommand = it->second.pFnCommand;
 		as.command = fnCommand;
 		as.op = commandType;
+		m_oState.m_nPC += 2;
 		if (as.op.arg1Type != 0) // 0 for EArgumentType::None
 		{
-			as.argValue.push_back(static_cast<uint32>(_byteswap_ulong(m_pMemory->at<uint32>(m_oState.m_nPC +=  6))));
+			as.argValue.push_back(static_cast<uint32>(_byteswap_ulong(m_pMemory->at<uint32>(m_oState.m_nPC +=  4))));
 		}
 		if (as.op.arg2Type != 0)
 		{
@@ -271,17 +273,43 @@ bool CProcessor::IsRunning()
 
 void CProcessor::Run()
 {
+	//m_oState.m_fFlags.setTrap(true);
 	while (m_oState.m_bControlFlag)
 	{
 		if (m_oState.m_fFlags.getTrap())
 		{
-			//m_oDebugger->run(m_oState);
+			m_pIDebugger->Run();
 		}
 		m_oState.m_nIR = fetch();
 		m_oCurrentCommandContext = decode(m_oState.m_nIR);
 		m_oState.m_nPC += 4;
 		execute(m_oCurrentCommandContext);
 	}
+}
+
+void CProcessor::Stop()
+{
+	m_oState.m_bControlFlag = false;
+}
+
+void CProcessor::AttachDebugger(IDebuggerPtr pDebugger)
+{
+	if (pDebugger == nullptr)
+	{
+		// throw exception
+	}
+	m_pIDebugger = pDebugger;
+	//m_oState.m_fFlags.setTrap(true);
+}
+
+void CProcessor::DetachDebugger()
+{
+	m_pIDebugger = nullptr;
+}
+
+CProcessor::SState const & CProcessor::getState() const
+{
+	return m_oState;
 }
 
 CProcessor::SCommandDefinition::SCommandDefinition(FnCommand fn) : pFnCommand(fn)

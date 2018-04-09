@@ -44,6 +44,24 @@
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
       <ParseFiles>true</ParseFiles>
     </Filter>
+    <Filter Include="debugger">
+      <UniqueIdentifier>{8d0b68b4-4b72-4f5f-98d6-028dc290d119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\headers">
+      <UniqueIdentifier>{e26030e1-08ad-4f71-bb96-bcbccbd20739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\sources">
+      <UniqueIdentifier>{2dbe044d-559c-41e0-82f8-3d384814d208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dissassembler">
+      <UniqueIdentifier>{c0656c34-9273-4258-979b-ca93bf0dd25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dissassembler\headers">
+      <UniqueIdentifier>{1a228053-5146-405e-97c1-83c51894b9aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dissassembler\sources">
+      <UniqueIdentifier>{aea84d29-3397-4cea-8f99-83d67b102591}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\compiler\compiler.h">
@@ -85,20 +103,26 @@
     <ClInclude Include="src\interpreter\loader.h">
       <Filter>interpreter\headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\compiler\codegenerator.h">
-      <Filter>compiler\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\compiler\disassembler.h">
-      <Filter>compiler\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\compiler\disparser.h">
-      <Filter>compiler\headers</Filter>
-    </ClInclude>
     <ClInclude Include="executor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\interpreter\executor.h">
       <Filter>interpreter\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="debugger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debugger\debugger.h">
+      <Filter>debugger\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\disassember\codegenerator.h">
+      <Filter>dissassembler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\disassember\disassembler.h">
+      <Filter>dissassembler\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\disassember\disparser.h">
+      <Filter>dissassembler\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -129,17 +153,20 @@
     <ClCompile Include="src\interpreter\memory.cpp">
       <Filter>interpreter\sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\compiler\codegenerator.cpp">
-      <Filter>compiler\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compiler\disassembler.cpp">
-      <Filter>compiler\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compiler\disparser.cpp">
-      <Filter>compiler\sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\interpreter\executor.cpp">
       <Filter>interpreter\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debugger\debugger.cpp">
+      <Filter>debugger\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\disassember\codegenerator.cpp">
+      <Filter>dissassembler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\disassember\disassembler.cpp">
+      <Filter>dissassembler\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\disassember\disparser.cpp">
+      <Filter>dissassembler\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

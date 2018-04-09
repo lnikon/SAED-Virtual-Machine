@@ -1,8 +1,8 @@
 #ifndef CODEGENERATOR_H
 #define CODEGENERATOR_H
 
-#include "tokens.h"
-#include "readerwriter.h"
+#include "../compiler/tokens.h"
+#include "../compiler/readerwriter.h"
 
 class CCodeGenerator
 {

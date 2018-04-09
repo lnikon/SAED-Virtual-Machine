@@ -1,6 +1,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
+#include <QDataStream>
 #include <QHash>
 
 enum class EInstruction;
@@ -61,6 +62,12 @@ union UOpcode
 	//{
 	//}
 
+	friend QDataStream& operator>>(QDataStream& in, UOpcode& op)
+	{
+		in >> op.opcode;
+		return in;
+	}
+
 	uint32 getArgCout()
 	{
 		uint32 count = 0;
@@ -101,7 +108,7 @@ enum class EType { Byte, Word, Dword, Qword };
 const QHash<QString, EType> HType =
 {
 	{ "byte", EType::Byte },{ "word", EType::Word },
-{ "dword", EType::Dword },{ "qword", EType::Qword }
+	{ "dword", EType::Dword },{ "qword", EType::Qword }
 };
 
 enum class EInstruction
@@ -206,20 +213,12 @@ struct SInstructionParameters
 	}
 };
 
-const QHash<uint16, int> HInstCount =
-{
-	{ static_cast<uint16>(EInstruction::Add), 3 },
-	{ static_cast<uint16>(EInstruction::Assign), 2 },
-	{ static_cast<uint16>(EInstruction::Sub), 3 },
-	{ static_cast<uint16>(EInstruction::Mul), 3 }
-};
-
 const QHash<QString, SInstructionParameters> inst =
 {
 	{ "invalid", SInstructionParameters(EInstruction::Invalid, 0, EType::Dword) },
 	{ "nop", SInstructionParameters(EInstruction::Nop, 0, EType::Dword) },
 	{ "end", SInstructionParameters(EInstruction::End, 0, EType::Dword) },
-	{ "break", SInstructionParameters(EInstruction::Break, 1, EType::Dword) },
+	{ "break", SInstructionParameters(EInstruction::Break, 0, EType::Dword) },
 	{ "int", SInstructionParameters(EInstruction::Int, 1, EType::Dword) },
 	{ "jump", SInstructionParameters(EInstruction::Jump, 1, EType::Dword) },
 	{ "call", SInstructionParameters(EInstruction::Call, 1, EType::Dword) },

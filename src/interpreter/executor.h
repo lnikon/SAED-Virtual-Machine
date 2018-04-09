@@ -5,7 +5,6 @@
 class CExecutor : public CProcessor::IExecutor
 {
 public:
-
 	void Invalid(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
 	void Nop(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
 	void End(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
@@ -59,4 +58,5 @@ public:
 	void Popsf(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
 	void In(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
 	void Out(CProcessor::SState& machineState, CProcessor::SCommand& comand) override;
+
 };

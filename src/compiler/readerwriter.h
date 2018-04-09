@@ -34,6 +34,7 @@ public:
 
 public:
 	QByteArray getDataSection();
+
 public:
 	SHeader readHeader(QString filename);
 	SHeader readHeader(); // <--
@@ -65,10 +66,13 @@ private:
 	std::string m_sSignature;
 	SHeader m_SHeader;
 	QByteArray m_buffer;
+
 public: // Arm
 	QString m_filename; // <--
+
 private:
 	SHeader m_readSHeader;
+
 };
 
 #endif

@@ -11,11 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="debugger.h" />
     <ClInclude Include="executor.h" />
-    <ClInclude Include="src\compiler\codegenerator.h" />
     <ClInclude Include="src\compiler\compiler.h" />
-    <ClInclude Include="src\compiler\disassembler.h" />
-    <ClInclude Include="src\compiler\disparser.h" />
     <ClInclude Include="src\compiler\header.h" />
     <ClInclude Include="src\compiler\instructions.h" />
     <ClInclude Include="src\compiler\lexer.h" />
@@ -23,6 +21,10 @@
     <ClInclude Include="src\compiler\readerwriter.h" />
     <ClInclude Include="src\compiler\registers.h" />
     <ClInclude Include="src\compiler\tokens.h" />
+    <ClInclude Include="src\debugger\debugger.h" />
+    <ClInclude Include="src\disassember\codegenerator.h" />
+    <ClInclude Include="src\disassember\disassembler.h" />
+    <ClInclude Include="src\disassember\disparser.h" />
     <ClInclude Include="src\interpreter\executor.h" />
     <ClInclude Include="src\interpreter\interpreter.h" />
     <ClInclude Include="src\interpreter\i_o_manager.h" />
@@ -31,14 +33,15 @@
     <ClInclude Include="src\interpreter\processor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\compiler\codegenerator.cpp" />
     <ClCompile Include="src\compiler\compiler.cpp" />
-    <ClCompile Include="src\compiler\disassembler.cpp" />
-    <ClCompile Include="src\compiler\disparser.cpp" />
     <ClCompile Include="src\compiler\lexer.cpp" />
     <ClCompile Include="src\compiler\main.cpp" />
     <ClCompile Include="src\compiler\parser.cpp" />
     <ClCompile Include="src\compiler\readerwriter.cpp" />
+    <ClCompile Include="src\debugger\debugger.cpp" />
+    <ClCompile Include="src\disassember\codegenerator.cpp" />
+    <ClCompile Include="src\disassember\disassembler.cpp" />
+    <ClCompile Include="src\disassember\disparser.cpp" />
     <ClCompile Include="src\interpreter\executor.cpp" />
     <ClCompile Include="src\interpreter\interpreter.cpp" />
     <ClCompile Include="src\interpreter\loader.cpp" />

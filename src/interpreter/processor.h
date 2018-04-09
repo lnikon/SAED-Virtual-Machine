@@ -11,6 +11,14 @@
 
 #include <QVarLengthArray>
 
+class IDebugger
+{
+public:
+	virtual void Run() = 0;
+};
+
+using IDebuggerPtr = std::shared_ptr<IDebugger>;
+
 class CProcessor
 {
 	class IExecutor;
@@ -22,7 +30,6 @@ class CProcessor
 	friend class IExecutor;
 
 public:
-
 	CProcessor() = default;
 
 	CProcessor(CProcessor const&) = delete;
@@ -37,6 +44,10 @@ public:
 
 private:
 	bool m_bIsRunning = false;
+
+public: // Debugger
+	void AttachDebugger(IDebuggerPtr pDebugger);
+	void DetachDebugger();
 
 public:
 	class CFlags
@@ -92,6 +103,7 @@ public:
 	};
 
 public:
+
 	struct SState
 	{
 		uint32 m_nPC;
@@ -108,7 +120,9 @@ public:
 		bool m_bControlFlag = true;
 	};
 
-	typedef void (IExecutor::* FnCommand)(CProcessor::SState&, CProcessor::SCommand&);
+	SState const& getState() const;
+
+	using FnCommand = void (IExecutor::*)(CProcessor::SState&, CProcessor::SCommand&);
 
 	struct SCommand
 	{
@@ -189,17 +203,17 @@ public:
 
 	struct SCommandDefinition
 	{
-
 		SCommandDefinition(FnCommand fn);
-
 		FnCommand pFnCommand;
 	};
 
 private:
 	SCommand m_oCurrentCommandContext;
 
-	CMemoryPtr m_pMemory;
-	IExecutorPtr m_pIexecutor;
+	CMemoryPtr m_pMemory; 
+	IExecutorPtr m_pIExecutor;
+
+	IDebuggerPtr m_pIDebugger;
 
 	SState m_oState;
 

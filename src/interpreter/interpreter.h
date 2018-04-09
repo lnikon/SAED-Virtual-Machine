@@ -22,15 +22,22 @@ public:
     bool isValid();
     bool isRuning();
 
-	inline CProcessorPtr getCPU() {}
-	inline CMemoryPtr getMem() {}
+	void setDebugger(IDebuggerPtr pIDebugger);
+
+	CProcessorPtr getProcessor();
+	CMemoryPtr getMemory();
 
 private:
     CProcessorPtr m_pProcessor;
     CMemoryPtr m_pMemory;
+
+	IDebuggerPtr m_pIDebugger;
+
     CLoader* m_Loader;
     CIOManager m_IOMan;
 
 };
+
+using CInterpreterPtr = std::shared_ptr<CInterpreter>;
 
 #endif // INTERPRETER_H

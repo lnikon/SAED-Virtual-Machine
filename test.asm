@@ -6,6 +6,8 @@ byte aa = 3
 dword aaaa = 2
 .code
 
-addb r0 , 12 ,r34
+nop
+sub r0 , 12 ,r34
+;addb r2 , 13 ,r24
 assignq r12, var6
 end

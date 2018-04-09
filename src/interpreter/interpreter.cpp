@@ -23,6 +23,7 @@ void CInterpreter::Init(QString const& inputFileName)
 	m_pProcessor = std::make_shared<CProcessor>();
 	m_pProcessor->Init(m_pMemory, info.codeIndex);
 
+
 }
 
 bool CInterpreter::isValid()
@@ -58,7 +59,36 @@ void CInterpreter::Reset()
 
 bool CInterpreter::isRuning()
 {
-	//if (m_CPU->isRunning() && m_CPU != nullptr)
-	//	return true;
+	if (m_pProcessor != nullptr && m_pProcessor->IsRunning())
+	{
+		return true;
+	}
 	return false;
+}
+
+void CInterpreter::setDebugger(IDebuggerPtr pIDebugger)
+{
+	m_pIDebugger = pIDebugger;
+
+	if (m_pProcessor != nullptr)
+	{
+		if (m_pIDebugger != nullptr)
+		{
+			m_pProcessor->AttachDebugger(m_pIDebugger);
+		}
+		else
+		{
+			m_pProcessor->DetachDebugger();
+		}
+	}
+}
+
+CProcessorPtr CInterpreter::getProcessor()
+{
+	return m_pProcessor;
+}
+
+CMemoryPtr CInterpreter::getMemory()
+{
+	return m_pMemory;
 }

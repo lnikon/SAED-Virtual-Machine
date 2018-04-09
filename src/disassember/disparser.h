@@ -1,9 +1,8 @@
 #ifndef DISPARSER_H
 #define DISPARSER_H
 
-#include "tokens.h"
-#include "readerwriter.h"
-
+#include "../compiler/tokens.h"
+#include "../compiler/readerwriter.h"
 
 class CDisParser
 {
@@ -19,18 +18,16 @@ private:
 	void readCodeSection(QByteArray in);
 	void readDataTableSection(QByteArray in);
 	void readCodeTableSection(QByteArray in);
+
 private:
 	void createSymbolTable();
+
 private:
 	QVector<SDataToken> m_sDataTokens;
 	QVector<SCodeToken> m_sCodeTokens;
 	QVector<int> m_symbolTable;
 	SHeader m_header;
+
 };
-
-
-
-
-
 
 #endif
